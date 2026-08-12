@@ -1,0 +1,282 @@
+/* --- 全局重置与基础定义 --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /*font-family: "Segoe UI", "Microsoft YaHei", sans-serif;*/
+    font-family: "LXGWWenKaiMono";
+    cursor: default;
+    border-radius: 0 !important;
+}
+
+@font-face {
+    font-family: "LXGWWenKaiMono";
+    src: url("../assets/fonts/LXGWWenKaiMono-Regular.ttf") format("truetype");
+}
+
+:root {
+    --tfur-blue: #0078d7;
+    --accent-color: #0078d7;
+    --bg-acrylic: rgba(255, 255, 255, 0.55);
+    --bg-acrylic-dark: rgba(30, 30, 30, 0.75);
+    --tfur-border: rgba(0, 0, 0, 0.2);
+    --text-color: #000;
+}
+
+/* --- 亚克力面板基类 (Acrylic) --- */
+.acrylic,
+.acrylic-panel {
+    background: var(--bg-acrylic);
+    backdrop-filter: blur(25px) saturate(150%);
+    border: 1px solid var(--tfur-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+button,
+.tfur-button {
+    background: #cccccc;
+    border: 2px solid transparent;
+    padding: 6px 20px;
+    font-size: 14px;
+    color: #000;
+    transition: all 0.1s;
+    outline: none;
+}
+
+button:hover,
+.tfur-button:hover {
+    background: #e5e5e5;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+button:active,
+.tfur-button:active {
+    background: var(--tfur-blue);
+    color: white;
+}
+
+/* 主按钮样式 */
+button.primary,
+.tfur-button.primary {
+    background: var(--tfur-blue);
+    color: white;
+}
+
+button.primary:hover,
+.tfur-button.primary:hover {
+    background: #0086f0;
+}
+
+input[type="text"],
+input[type="password"],
+.tfur-input {
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(0, 0, 0, 0.4);
+    padding: 8px 12px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+.tfur-input:focus {
+    border-color: var(--tfur-blue);
+    background: #fff;
+}
+
+/* --- 进度条 --- */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.tfur-loader {
+    width: 200px;
+    height: 3px;
+    background: #ddd;
+    position: relative;
+    overflow: hidden;
+}
+
+.tfur-loader::after {
+    content: "";
+    position: absolute;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: var(--tfur-blue);
+    animation: tfur-slide 1.5s infinite ease-in-out;
+}
+
+@keyframes tfur-slide {
+    0% {
+        left: -50%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+.loading-text {
+    margin-top: 15px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-family: "Segoe UI", sans-serif;
+    color: var(--tfur-blue);
+    text-transform: uppercase;
+}
+
+/* 磁贴容器 */
+.tiles-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* 基础磁贴样式 */
+.tile {
+    padding: 15px;
+    height: 120px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* 文字靠底部 */
+    transition: transform 0.1s;
+}
+
+.tile:hover {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    transform: scale(0.98);
+}
+
+/* 不同色块 */
+.bg-blue {
+    background-color: #0078d7;
+}
+
+.bg-green {
+    background-color: #107c10;
+}
+
+.bg-purple {
+    background-color: #512bd4;
+}
+
+.bg-orange {
+    background-color: #d83b01;
+}
+
+/* --- 对话框 (ContentDialog) --- */
+
+.tfur-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.tfur-dialog {
+    width: 400px;
+    background: white;
+    /* 或者使用 var(--bg-acrylic) */
+    border: 1px solid var(--tfur-border);
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: scaleUp 0.15s ease-out;
+}
+
+.tfur-dialog-title {
+    color: #000;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+}
+
+.tfur-dialog-content {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.tfur-dialog-content-link {
+    background-color: #444;
+    color: white !important;
+    padding: 4px 8px;
+    font-family: 'Fira Code', monospace;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.tfur-dialog-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.tfur-dialog-btn {
+    min-width: 120px;
+    height: 32px;
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(1.05);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.fluent-icon {
+    position: absolute;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.fluent-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.fluent-icon svg path {
+    fill: currentColor;
+}
+
+.input-wrapper:focus-within .fluent-icon {
+    color: var(--tfur-blue);
+}
+
+.input-wrapper:focus-within .tfur-input {
+    border-bottom-color: var(--tfur-blue);
+}

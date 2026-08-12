@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <link rel="stylesheet" href="css/general_ui.css">
+    <title>TouchFish UI Remake 2 DEBUGGER</title>
+    <style>
+        body {
+            font-family: monospace !important;
+            margin-left: 10px;
+            color: white;
+        }
+
+        body {
+            background: #0078d7 url('default_bg.jpg') center/cover;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>TouchFish UI Remake 2 (UI) 调试器</h1>
+    <h2>链接</h2>
+    <p>返回到 <a href="index.html">index.html</a></p>
+    <p>返回到 <a href="chat.html">chat.html</a></p>
+    <p>返回到 <a href="welcome.html">welcome.html</a></p>
+    <h2>测试</h2>
+    <input id="alerttit" placeholder="alert类标题"><br>
+    <input id="alerttext" placeholder="所有文字类，加载条选填，alert类必填"><br>
+    <button id="uialertbtn">UI.uialert</button>
+    <button id="aalertbtn">UI.aalert</button>
+    <hr>
+    <lable><input id="loadingTi" placeholder="输入秒"></lable><br>
+    <button id="loadingbtn">UI.showLoading</button>
+    <script type="module" defer>
+        import { UI } from "./js/general_ui.js"
+        const attit = document.getElementById("alerttit");
+        const atext = document.getElementById("alerttext");
+        document.getElementById("uialertbtn").onclick = async () => {
+            UI.uialert(attit.value, atext.value);
+        };
+        document.getElementById("aalertbtn").onclick = async () => {
+            UI.aalert(attit.value, atext.value);
+        };
+        document.getElementById("loadingbtn").onclick = async () => {
+            UI.showLoading(atext.value)
+            setTimeout(async () => {
+                UI.hideLoading();
+            }, document.getElementById("loadingTi").value * 1000);
+        }
+    </script>
+</body>
+</html>

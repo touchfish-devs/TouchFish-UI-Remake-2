@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/general_ui.css">
+    <script src="js/turntodebug.js"></script>
+    <title>TouchFish UI Remake 2</title>
+    <style>
+        body {
+            background: #0078d7 url('assets/images/default_bg.jpg') center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* 注册卡片基础样式 */
+        .reg-card {
+            width: 380px;
+            padding: 40px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 分步页面切换动画 */
+        .tfur-step-page {
+            display: none;
+            animation: tfur-page-slide 0.4s ease-out;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .tfur-step-page.active {
+            display: flex;
+        }
+
+        @keyframes tfur-page-slide {
+            from {
+                opacity: 0;
+                transform: translateX(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 300;
+            margin: 0 0 10px 0;
+            color: #000;
+        }
+
+        .tfur-subtitle {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        /* --- TFUR 点状进度条 --- */
+        .tfur-dots-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            height: 20px;
+            margin: 20px 0;
+        }
+
+        .tfur-dot {
+            width: 5px;
+            height: 5px;
+            background-color: var(--tfur-blue);
+            border-radius: 50%;
+            opacity: 0;
+            animation: tfur-dot-cycle 1.6s infinite;
+        }
+
+        .tfur-dot:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .tfur-dot:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .tfur-dot:nth-child(4) {
+            animation-delay: 0.45s;
+        }
+
+        .tfur-dot:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes tfur-dot-cycle {
+            0% {
+                transform: translateX(-30px);
+                opacity: 0;
+            }
+
+            40%,
+            60% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(30px);
+                opacity: 0;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #0067b8;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .tfur-btn-next {
+            min-width: 100px;
+            align-self: flex-end;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reg-card acrylic">
+
+        <!-- 第一步：服务器连接信息 -->
+        <div id="reg-step-1" class="tfur-step-page active">
+            <h2>注册新账户</h2>
+            <p class="tfur-subtitle">请输入服务器连接信息</p>
+
+            <input type="text" class="input-group tfur-input" id="reg-server-ip" placeholder="服务器 IP">
+            <input type="number" class="input-group tfur-input" id="reg-api-port" placeholder="API 端口"
+                inputmode="numeric">
+            <input type="number" class="input-group tfur-input" id="reg-tcp-port" placeholder="TCP 端口"
+                inputmode="numeric">
+
+            <div style="margin-top: auto; display: flex; justify-content: flex-end;">
+                <button class="tfur-button primary tfur-btn-next" id="btn-check-server">下一步</button>
+            </div>
+        </div>
+
+        <div id="reg-loader" class="tfur-dots-container">
+            <div class="tfur-dot"></div>
+            <div class="tfur-dot"></div>
+            <div class="tfur-dot"></div>
+            <div class="tfur-dot"></div>
+            <div class="tfur-dot"></div>
+        </div>
+
+        <!-- 第二步：创建账户 -->
+        <div id="reg-step-2" class="tfur-step-page">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <span class="back-link" onclick="backToStep1()" style="margin-top:0; margin-right: 8px;">⬅</span>
+                <span id="reg-display-server" style="font-size: 13px; color: #666;"></span>
+            </div>
+            <h2>创建账户</h2>
+
+            <input type="text" class="input-group tfur-input" id="reg-username" placeholder="设置用户名(须超过4位)">
+            <input type="text" class="input-group tfur-input" id="reg-email" placeholder="邮箱地址(选填)">
+            <input type="password" class="input-group tfur-input" id="reg-password" placeholder="设置密码">
+            <input type="password" class="input-group tfur-input" id="reg-confirm" placeholder="确认密码">
+
+            <div id="reg-captcha-area" class="input-group" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="text" class="tfur-input" id="reg-captcha-code" placeholder="验证码"
+                        style="flex: 1; min-width: 0;">
+                    <img id="reg-captcha-img" style="height: 36px; cursor: pointer; border: 1px solid var(--tfur-border); background: #fff;"
+                        title="点击刷新验证码">
+                </div>
+            </div>
+
+            <button id="reg-submit-btn" class="tfur-button primary" style="width: 100%; margin-top: 15px;">立即注册</button>
+        </div>
+
+        <!-- 第三步：激活账号 -->
+        <div id="reg-step-3" class="tfur-step-page">
+            <h2>激活账号</h2>
+            <p class="tfur-subtitle" style="line-height: 1.6;">您的账户已创建，但还需激活才能登录。<br>激活码已发送至您的注册邮箱，请注意查收。</p>
+
+            <input type="text" class="input-group tfur-input" id="reg-activate-code" placeholder="输入邮箱中的激活码"
+                inputmode="numeric">
+
+            <button id="reg-activate-btn" class="tfur-button primary" style="width: 100%; margin-top: 15px;">激活账号</button>
+        </div>
+
+        <div style="text-align: center;">
+            <span class="back-link" onclick="location.href='index.html'">返回登录界面</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { UI } from './js/general_ui.js';
+
+        const regServerIpInput = document.getElementById('reg-server-ip');
+        const regApiPortInput = document.getElementById('reg-api-port');
+        const regTcpPortInput = document.getElementById('reg-tcp-port');
+        const loader = document.getElementById('reg-loader');
+        const step1 = document.getElementById('reg-step-1');
+        const step2 = document.getElementById('reg-step-2');
+        const step3 = document.getElementById('reg-step-3');
+        const emailInput = document.getElementById('reg-email');
+        const captchaArea = document.getElementById('reg-captcha-area');
+        const captchaCodeInput = document.getElementById('reg-captcha-code');
+        const captchaImg = document.getElementById('reg-captcha-img');
+
+        /** 服务器配置 */
+        let serverConfig = null; // { captcha, email_activate }
+        /** 当前验证码标识码 */
+        let captchaStamp = null;
+        /** 待激活账号的 UID */
+        let activateUid = null;
+        /** 当前注册用户名 */
+        let currentUsername = '';
+
+        function getRegServerConfig() {
+            const ip = regServerIpInput.value.trim();
+            const apiPort = (regApiPortInput.value || '7001').trim();
+            const tcpPort = (regTcpPortInput.value || '24174').trim();
+            if (!ip) {
+                throw new Error('请输入服务器 IP。');
+            }
+            return {
+                ip,
+                apiPort,
+                tcpPort,
+                apiBase: `http://${ip}:${apiPort}`
+            };
+        }
+
+        function isSuccessResponse(data) {
+            if (typeof data === 'string') return data.toLowerCase().includes('true');
+            return Boolean(data);
+        }
+
+        async function getUidByUsername(apiBase, username) {
+            try {
+                const resp = await window.electronAPI.authRequest({ type: 'getUID', apiBase, username });
+                if (resp && resp.success && resp.data && resp.data.uid) {
+                    return resp.data.uid;
+                }
+            } catch (err) {
+                console.error('UID 查询失败:', err);
+            }
+            return null;
+        }
+
+        /** 加载验证码图片 */
+        async function loadCaptcha(apiBase) {
+            try {
+                const resp = await window.electronAPI.authRequest({ type: 'getCaptcha', apiBase });
+                if (resp && resp.success && resp.data && resp.data.stamp && resp.data.pic) {
+                    captchaStamp = resp.data.stamp;
+                    captchaImg.src = `data:image/png;base64,${resp.data.pic}`;
+                    captchaCodeInput.value = '';
+                    return true;
+                }
+                captchaStamp = null;
+                return false;
+            } catch (err) {
+                console.error('验证码加载失败:', err);
+                captchaStamp = null;
+                return false;
+            }
+        }
+
+        /** 点击验证码图片刷新 */
+        captchaImg.onclick = async () => {
+            await loadCaptcha(getRegServerConfig().apiBase);
+        };
+
+        window.onload = () => {
+            const savedIp = localStorage.getItem('last_server_ip');
+            const savedApiPort = localStorage.getItem('last_server_api_port');
+            const savedTcpPort = localStorage.getItem('last_server_tcp_port');
+            if (savedIp) regServerIpInput.value = savedIp;
+            if (savedApiPort) regApiPortInput.value = savedApiPort;
+            if (savedTcpPort) regTcpPortInput.value = savedTcpPort;
+        };
+
+        document.getElementById('btn-check-server').onclick = async () => {
+            const { ip, apiPort, tcpPort, apiBase } = getRegServerConfig();
+
+            step1.classList.remove('active');
+            loader.style.display = 'flex';
+
+            document.getElementById('reg-display-server').innerText = `${ip}:${apiPort}`;
+
+            try {
+                UI.setBusy(true);
+                const resp = await window.electronAPI.authRequest({
+                    type: 'getInfo',
+                    apiBase
+                });
+
+                if (!resp || !resp.success) {
+                    throw new Error((resp && resp.error) || '无法获取服务器信息');
+                }
+
+                /** 服务器配置 */
+                serverConfig = {
+                    captcha: Boolean(resp.data && resp.data.captcha),
+                    email_activate: Boolean(resp.data && resp.data.email_activate)
+                };
+
+                if (serverConfig.email_activate) {
+                    emailInput.placeholder = '邮箱地址（用于激活账号，必填）';
+                } else {
+                    emailInput.placeholder = '邮箱地址（选填）';
+                }
+
+                step2.classList.add('active');
+
+                if (serverConfig.captcha) {
+                    captchaArea.style.display = 'block';
+                    const ok = await loadCaptcha(apiBase);
+                    if (!ok) {
+                        await UI.uialert('提示', '验证码加载失败，请点击验证码图片重试。');
+                    }
+                } else {
+                    captchaArea.style.display = 'none';
+                }
+
+                loader.style.display = 'none';
+            } catch (err) {
+                console.error(err.message);
+                await UI.uialert('错误', `无法建立与服务器的通信，具体错误：${err.message}`);
+                loader.style.display = 'none';
+                step1.classList.add('active');
+            } finally {
+                UI.setBusy(false);
+            }
+        };
+
+        window.backToStep1 = () => {
+            step2.classList.remove('active');
+            step1.classList.add('active');
+        };
+
+        document.getElementById('reg-submit-btn').onclick = async () => {
+            const user = document.getElementById('reg-username').value.trim();
+            const email = emailInput.value.trim();
+            const pass = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if (user.length < 4 || !pass) {
+                await UI.uialert('信息缺失', '请确保填写了用户名(须超过四位)和密码。');
+                return;
+            }
+            if (pass !== confirm) {
+                await UI.uialert('校验错误', '两次输入的密码不一致。');
+                return;
+            }
+
+            if (serverConfig && serverConfig.email_activate) {
+                if (!email) {
+                    await UI.uialert('信息缺失', '该服务器要求提供邮箱，用于激活账号。');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    await UI.uialert('校验错误', '请输入正确的邮箱地址。');
+                    return;
+                }
+            }
+
+            if (serverConfig && serverConfig.captcha) {
+                if (!captchaStamp) {
+                    await UI.uialert('提示', '验证码尚未加载，请点击验证码图片重试。');
+                    return;
+                }
+                if (!captchaCodeInput.value.trim()) {
+                    await UI.uialert('信息缺失', '请输入图片中的验证码。');
+                    return;
+                }
+            }
+
+            UI.setBusy(true);
+            UI.showLoading('正在创建账户...');
+
+            try {
+                const { ip, apiPort, tcpPort, apiBase } = getRegServerConfig();
+                localStorage.setItem('last_server_ip', ip);
+                localStorage.setItem('last_server_api_port', apiPort);
+                localStorage.setItem('last_server_tcp_port', tcpPort);
+
+                const result = await window.electronAPI.authRequest({
+                    type: 'register',
+                    apiBase,
+                    username: user,
+                    password: pass,
+                    email: email || undefined,
+                    captcha_stamp: (serverConfig && serverConfig.captcha) ? captchaStamp : '',
+                    captcha_code: (serverConfig && serverConfig.captcha) ? captchaCodeInput.value.trim() : ''
+                });
+
+                UI.hideLoading();
+                UI.setBusy(false);
+
+                if (!result || !result.success) {
+                    throw new Error((result && result.error) || '通信异常');
+                }
+
+                if (!isSuccessResponse(result.data)) {
+                    // 拒绝
+                    if (serverConfig && serverConfig.captcha) {
+                        await loadCaptcha(apiBase);
+                    }
+                    await UI.uialert('注册失败', result.data || '服务器拒绝了请求。');
+                    return;
+                }
+
+                // 成功
+                if (serverConfig && serverConfig.email_activate) {
+                    currentUsername = user;
+                    activateUid = await getUidByUsername(apiBase, user);
+                    step2.classList.remove('active');
+                    step3.classList.add('active');
+                } else {
+                    await UI.uialert('注册成功', '账户已就绪，快去登录吧！');
+                    location.href = 'index.html';
+                }
+            } catch (error) {
+                UI.hideLoading();
+                UI.setBusy(false);
+                await UI.uialert('注册异常', `详细信息：${error.message}`);
+            }
+        };
+
+        document.getElementById('reg-activate-btn').onclick = async () => {
+            const codeText = document.getElementById('reg-activate-code').value.trim();
+            const code = parseInt(codeText, 10);
+
+            if (!codeText || isNaN(code)) {
+                await UI.uialert('信息缺失', '请输入邮箱中收到的激活码。');
+                return;
+            }
+
+            UI.setBusy(true);
+            UI.showLoading('正在激活账号...');
+
+            try {
+                const { apiBase } = getRegServerConfig();
+
+                if (!activateUid) {
+                    activateUid = await getUidByUsername(apiBase, currentUsername);
+                }
+                if (!activateUid) {
+                    throw new Error('无法获取账号信息，请稍后重试。');
+                }
+
+                const result = await window.electronAPI.authRequest({
+                    type: 'activate',
+                    apiBase,
+                    uid: activateUid,
+                    activateCode: code
+                });
+
+                UI.hideLoading();
+                UI.setBusy(false);
+
+                if (result && result.success && isSuccessResponse(result.data)) {
+                    await UI.uialert('激活成功', '账号已激活，快去登录吧！');
+                    location.href = 'index.html';
+                } else {
+                    await UI.uialert('激活失败', (result && result.error) || '激活码错误或已失效，请核对后重试。');
+                }
+            } catch (error) {
+                UI.hideLoading();
+                UI.setBusy(false);
+                await UI.uialert('激活异常', `详细信息：${error.message}`);
+            }
+        };
+    </script>
+</body>
+
+</html>

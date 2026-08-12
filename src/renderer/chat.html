@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/general_ui.css">
+    <script src="js/turntodebug.js"></script>
+    <style>
+        body {
+            background: #0078d7 url('assets/images/default_bg.jpg') center/cover;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        div.active {
+            display: block;
+        }
+
+        div.unshown {
+            display: none;
+        }
+
+        .nav-rail {
+            width: 48px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            width: 48px;
+            height: 48px;
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            border-left: 2px solid var(--tfur-blue);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--tfur-blue);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-item svg path {
+            fill: currentColor;
+        }
+
+        /* --- 布局容器 --- */
+        .master-view {
+            width: 300px;
+            background: var(--bg-acrylic);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--tfur-border);
+        }
+
+        .view-header {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 300;
+        }
+
+        .detail-view {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .input-area {
+            height: 150px;
+            background: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid var(--tfur-border);
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="nav-rail">
+        <div class="nav-item" id="nav-chat" title="聊天"></div>
+        <div class="nav-item" id="nav-contacts" title="联系人"></div>
+        <div class="nav-item" id="nav-alert" title="通知"></div>
+        <div class="nav-item" id="nav-forums" title="论坛"></div>
+        <!---->
+        <div class="nav-item" style="margin-top: auto;" id="nav-info" title="关于"></div>
+        <div class="nav-item" id="nav-settings" title="设置"></div>
+    </div>
+
+    <div class="master-view">
+        <div class="background active">
+            <p style="padding: 20px; color: #666; font-size: 13px;">请选择左侧栏的选项以开始聊天</p>
+        </div>
+        <div class="chat-sidebar unshown">
+            <!-- 消息列表/群聊 -->
+            <div class="view-header">消息列表</div>
+            <div id="contact-list">
+                <p style="padding: 20px; color: #666; font-size: 13px;">暂无会话...</p>
+            </div>
+            <hr>
+            <div id="group-list">
+                <p style="padding: 20px; color: #666; font-size: 13px;">暂无群聊...</p>
+            </div>
+        </div>
+        <div class="contacts-sidebar unshown">
+            <!-- 联系人列表 -->
+            <div class="view-header">联系人</div>
+            <div id="contacts-list">
+                <p style="padding: 20px; color: #666; font-size: 13px;">暂无联系人...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-view">
+        <div class="unselected-main active">
+        </div>
+        <div class="chat-main unshown">
+            <div class="view-header" style="background: rgba(255,255,255,0.3)">
+                <span id="current-chat-title">未选择聊天</span>
+            </div>
+            <div class="chat-content">
+            </div>
+            <div class="input-area">
+                <textarea class="tfur-input"
+                    style="width: 100%; height: 80px; resize: none; border: none; background: transparent;"
+                    placeholder="输入消息..."></textarea>
+                <div style="text-align: right; margin-top: 10px;">
+                    <button class="tfur-button primary">发送</button>
+                </div>
+            </div>
+            <div class="view-header" style="background: rgba(255,255,255,0.3)">
+                <span id="current-chat-title">未选择聊天</span>
+            </div>
+            <div class="chat-content">
+            </div>
+            <div class="input-area">
+                <textarea class="tfur-input"
+                    style="width: 100%; height: 80px; resize: none; border: none; background: transparent;"
+                    placeholder="输入消息..."></textarea>
+                <div style="text-align: right; margin-top: 10px;">
+                    <button class="tfur-button primary">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { UI } from './js/general_ui.js';
+
+        window.onload = async () => {
+            UI.uialert('注意', '本页面尚未完成，目前全部功能都无法使用'); // TODO: 发版删掉
+            const chat_field = document.getElementById('nav-chat');
+            chat_field.innerHTML = await UI.getIcon('chat', 24, 'regular');
+            const contacts_field = document.getElementById('nav-contacts');
+            contacts_field.innerHTML = await UI.getIcon('people', 24, 'regular');
+            const alert_field = document.getElementById('nav-alert');
+            alert_field.innerHTML = await UI.getIcon('alert', 24, 'regular');
+            const forums_field = document.getElementById('nav-forums');
+            forums_field.innerHTML = await UI.getIcon('chat_bubbles_question', 24, 'regular');
+            const info_field = document.getElementById('nav-info');
+            info_field.innerHTML = await UI.getIcon('info', 24, 'regular');
+            const settings_field = document.getElementById('nav-settings');
+            settings_field.innerHTML = await UI.getIcon('settings', 24, 'regular');
+        };
+    </script>
+</body>
+
+</html>

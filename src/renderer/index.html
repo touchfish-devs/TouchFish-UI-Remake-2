@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/general_ui.css">
+    <script src="js/turntodebug.js"></script>
+    <title>TouchFish UI Remake 2</title>
+    <style>
+        body {
+            background: #0078d7 url('assets/images/default_bg.jpg') center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #yrj {
+            width: 250px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        /* 引导弹窗样式 */
+        #guide-modal {
+            width: 450px;
+            padding: 40px;
+            position: relative;
+            text-align: center;
+            display: none;
+            z-index: 100;
+        }
+
+        .skip-text-all {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 12px;
+            color: #555;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .skip-text:hover {
+            color: var(--tfur-blue);
+        }
+
+        /* 登录卡片样式 */
+        #login-card {
+            width: 350px;
+            padding: 35px;
+            display: none;
+            /* 初始隐藏 */
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .tfur-step-page {
+            display: none;
+            flex-direction: column;
+            animation: tfur-page-slide 0.4s ease-out;
+        }
+
+        .tfur-step-page.active {
+            display: flex;
+        }
+
+        @keyframes tfur-page-slide {
+            from {
+                opacity: 0;
+                transform: translateX(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .tfur-subtitle {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .tfur-btn-next {
+            min-width: 100px;
+            align-self: flex-end;
+            margin-top: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #0067b8;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="guide-modal" class="acrylic">
+        <span class="skip-text-all"><span class="skip-text"
+                onclick="skipAndShowLogin('false')">跳过</span>&nbsp;&nbsp;<span class="skip-text"
+                onclick="skipAndShowLogin()">不再显示</span></span>
+        <h2 style="font-weight: 300;">欢迎使用 TouchFish UI Remake 2</h2>
+        <p style="font-size: 14px; color: #333; margin-bottom: 30px; line-height: 1.6;">
+            你已开启摸鱼之旅 <span id="use-count" style="font-weight: 600;">1</span> 次。<br>
+            建议初次使用之前先查看使用介绍<br>
+            以后你也可以在设置中跳转到引导界面<br>
+            本界面在使用 5 次后将不再显示。
+        </p>
+        <button class="tfur-button primary" style="width: 100%; height: 45px;" onclick="location.href='welcome.html'">
+            查看使用介绍
+        </button>
+    </div>
+
+    <div id="yrj" class="acrylic" style="display: none;">
+        <p>今天是 <span id="yrj-year">3000</span> 年 4 月 1 日</p>
+        <br>
+        <button id="yrj-clickme">点击我</button>
+        <br>
+        <a id="yrj-exit"></a>
+    </div>
+
+    <div id="login-card" class="acrylic">
+        <div id="login-step-1" class="tfur-step-page active">
+            <h2>登录</h2>
+            <p class="tfur-subtitle">请输入服务器连接信息</p>
+            <input type="text" class="input-group tfur-input" id="server-ip" placeholder="服务器 IP">
+            <input type="number" class="input-group tfur-input" id="server-api-port" placeholder="API 端口"
+                inputmode="numeric">
+            <input type="number" class="input-group tfur-input" id="server-tcp-port" placeholder="TCP 端口"
+                inputmode="numeric">
+            <div style="margin-top: auto; display: flex; justify-content: flex-end;">
+                <button id="login-next-btn" class="tfur-button primary tfur-btn-next">下一步</button>
+            </div>
+        </div>
+
+        <div id="login-step-2" class="tfur-step-page">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <span class="back-link" onclick="backToLoginStep1()" style="margin-top:0; margin-right: 8px;">⬅</span>
+                <span id="login-display-server" style="font-size: 13px; color: #666;"></span>
+            </div>
+            <h2>登录账号</h2>
+            <input type="text" class="input-group tfur-input" id="username" placeholder="用户名/UID">
+            <input type="password" class="input-group tfur-input" id="password" placeholder="密码">
+            <label>
+                <button id="remember-password-btn">记住密码</button>
+            </label>
+            <script type="module" defer>
+                import { UI } from './js/general_ui.js';
+                if (localStorage.getItem('rememberedPassword')) {
+                    document.getElementById('remember-password-btn').innerHTML = '忘记密码';
+                }
+                document.getElementById('remember-password-btn').addEventListener('click', function () {
+                    if (this.innerHTML === '记住密码') {
+                        localStorage.setItem('rememberedPassword', document.getElementById('password').value.trim());
+                        UI.uialert('提示', '密码已保存，下次登录将自动填充。');
+                        this.innerHTML = '忘记密码';
+                    } else {
+                        localStorage.removeItem('rememberedPassword');
+                        this.innerHTML = '记住密码';
+                    }
+                });
+            </script>
+            <button id="login-btn" class="tfur-button primary" style="width: 100%; margin-top: 10px;">登录</button>
+        </div>
+
+        <div style="text-align: center;">
+            <span id="go-reg-btn" class="back-link">注册新账户</span>
+        </div>
+    </div>
+
+    <script>
+        date = new Date();
+        function openFullscreen() {
+            const elem = document.documentElement;
+            elem.requestFullscreen();
+        }
+    </script>
+
+    <script type="module" defer>
+        import { UI } from './js/general_ui.js';
+        const year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate();
+        console.log(`今天是 ${year} 年, ${month} 月, ${day} 日`);
+
+        const guideModal = document.getElementById('guide-modal');
+        const loginCard = document.getElementById('login-card');
+        const idonotknow = document.getElementById('yrj');
+
+        document.getElementById('yrj-exit').onclick = () => {
+            idonotknow.style.display = 'none';
+            showLoginDirectly();
+        }
+
+        document.getElementById('yrj-clickme').onclick = async () => {
+            await alert('你被骗了');
+            openFullscreen();
+            location.href = "https://www.bilibili.com/video/BV1GJ411x7h7";
+            openFullscreen();
+        }
+
+        window.onload = async () => {
+            document.getElementById('yrj-year').textContent = year;
+
+            if (month == 4 && day == 1) {
+                guideModal.style.display = 'none';
+                loginCard.style.display = 'none';
+                idonotknow.style.display = 'block';
+            } else {
+                UI.showLoading('正在加载配置...');
+                let count = parseInt(localStorage.getItem('TFUR_use_count') || '0');
+                const hasSkipped = localStorage.getItem('TFUR_skip_guide') === 'true';
+                const readGuide = localStorage.getItem('TFUR_guide_read') === 'true';
+                localStorage.setItem('TFUR_guide_read', 'false');
+                count++;
+                localStorage.setItem('TFUR_use_count', count);
+                document.getElementById('use-count').innerText = count;
+
+                UI.hideLoading();
+
+                if (count <= 1 && !readGuide) {
+                    await UI.uialert("感谢您使用 TouchFish UI Remake 2", "稍后你可以查看使用方法，了解它 TouchFish v5 的全新特性。");
+                }
+
+                if (count > 5 || hasSkipped || readGuide) {
+                    showLoginDirectly();
+                } else {
+                    guideModal.style.display = 'block';
+                }
+            }
+        };
+
+        window.skipAndShowLogin = (mode = 'true') => {
+            localStorage.setItem('TFUR_skip_guide', mode);
+            guideModal.style.display = 'none';
+            showLoginDirectly();
+        };
+
+        function showLoginDirectly() {
+            loginCard.style.display = 'block';
+        }
+
+        function getLoginServerConfig() {
+            const ip = document.getElementById('server-ip').value.trim();
+            const apiPort = (document.getElementById('server-api-port').value || '7001').trim();
+            const tcpPort = (document.getElementById('server-tcp-port').value || '7002').trim();
+            if (!ip) {
+                throw new Error('请输入服务器 IP。');
+            }
+            return {
+                ip,
+                apiPort,
+                tcpPort,
+                apiBase: `http://${ip}:${apiPort}`
+            };
+        }
+
+        function isSuccessfulResponse(payload) {
+            if (payload === true) return true;
+            if (typeof payload === 'string') return payload.toLowerCase().includes('true');
+            return Boolean(payload);
+        }
+
+        function restoreLoginServerConfig() {
+            const savedIp = localStorage.getItem('last_server_ip');
+            const savedApiPort = localStorage.getItem('last_server_api_port');
+            const savedTcpPort = localStorage.getItem('last_server_tcp_port');
+            if (savedIp) document.getElementById('server-ip').value = savedIp;
+            if (savedApiPort) document.getElementById('server-api-port').value = savedApiPort;
+            if (savedTcpPort) document.getElementById('server-tcp-port').value = savedTcpPort;
+        }
+
+        window.backToLoginStep1 = () => {
+            document.getElementById('login-step-2').classList.remove('active');
+            document.getElementById('login-step-1').classList.add('active');
+        };
+
+        document.getElementById('login-next-btn').onclick = async () => {
+            try {
+                const { ip, apiPort, tcpPort, apiBase } = getLoginServerConfig();
+                localStorage.setItem('last_server_ip', ip);
+                localStorage.setItem('last_server_api_port', apiPort);
+                localStorage.setItem('last_server_tcp_port', tcpPort);
+                document.getElementById('login-display-server').innerText = `${ip}:${apiPort}`;
+                document.getElementById('login-step-1').classList.remove('active');
+                document.getElementById('login-step-2').classList.add('active');
+                const usrnameField = document.getElementById('username');
+                if (localStorage.getItem('last_username')) {
+                    usrnameField.value = localStorage.getItem('last_username');
+                }
+                if (localStorage.getItem('rememberedPassword')) {
+                    document.getElementById('password').value = localStorage.getItem('rememberedPassword');
+                }
+            } catch (err) {
+                await UI.uialert("参数缺失", err.message || "请输入服务器连接信息。");
+            }
+        };
+
+        // --- 登录交互 ---
+        document.getElementById('login-btn').onclick = async () => {
+            const username = document.getElementById('username').value.trim();
+            var uid = null;
+            const pass = document.getElementById('password').value;
+
+            if (!username || !pass) {
+                await UI.uialert("信息缺失", "请输入用户名和密码。");
+                return;
+            }
+
+            UI.setBusy(true);
+            UI.showLoading("正在与服务器通信...");
+
+            try {
+                const { apiBase } = getLoginServerConfig();
+
+                if (isNaN(username)) {
+                    /** 用户信息 */
+                    const userInfo = await window.electronAPI.authRequest({
+                        type: 'getUID',
+                        apiBase,
+                        username
+                    });
+
+                    console.log("UserInfo:", userInfo);
+
+                    if (userInfo && (userInfo.data.uid || userInfo.data.uid === 0)) {
+                        uid = userInfo.data.uid;
+                    } else {
+                        throw new Error("该用户名不存在");
+                    }
+                } else {
+                    uid = username;
+                }
+
+                const response = await window.electronAPI.authRequest({
+                    type: 'login',
+                    apiBase,
+                    username: uid,
+                    password: pass
+                });
+
+                if (response.success && isSuccessfulResponse(response.data)) {
+                    const serverinfo = await window.electronAPI.authRequest({
+                        type: 'getInfo',
+                        apiBase
+                    });
+                    UI.hideLoading();
+                    UI.setBusy(false);
+                    if (serverinfo.success) {
+                        localStorage.setItem('last_username', uid);
+                        location.href = 'chat.html';
+                        return;
+                    }
+                    await UI.uialert("连接失败", "服务器已响应，但无法读取服务器信息。");
+                } else {
+                    console.error("LOGIN" + response.data);
+                    await UI.uialert("登录失败", response.error || "账号或密码不正确。");
+                }
+            } catch (err) {
+                await UI.uialert("错误", `无法发起通信请求或者其他错误。<br>详细信息：${err}`);
+            }
+
+            UI.hideLoading();
+            UI.setBusy(false);
+        };
+
+        // --- 注册交互 ---
+        document.getElementById('go-reg-btn').onclick = () => {
+            localStorage.setItem('TFUR_guide_read', true);
+            location.href = 'reg.html';
+        };
+
+        restoreLoginServerConfig();
+    </script>
+</body>
+
+</html>
