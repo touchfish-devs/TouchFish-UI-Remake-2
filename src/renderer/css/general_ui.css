@@ -9,6 +9,87 @@
     border-radius: 0 !important;
 }
 
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(114, 114, 114, 0.4);
+    border-radius: 0 !important;
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(149, 149, 149, 0.7);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: rgba(184, 184, 184, 0.7);
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+    width: 12px;
+    height: 12px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+::-webkit-scrollbar-button:vertical:decrement:single-button {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="4,1 0,6 8,6" fill="rgba(255,255,255,0.8)"/></svg>');
+}
+
+::-webkit-scrollbar-button:vertical:increment:single-button {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="4,7 0,2 8,2" fill="rgba(255,255,255,0.8)"/></svg>');
+}
+
+::-webkit-scrollbar-button:horizontal:decrement:single-button {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="1,4 6,0 6,8" fill="rgba(255,255,255,0.8)"/></svg>');
+}
+
+::-webkit-scrollbar-button:horizontal:increment:single-button {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="7,4 2,0 2,8" fill="rgba(255,255,255,0.8)"/></svg>');
+}
+
+::-webkit-scrollbar-button:hover {
+    background-color: rgba(134, 134, 134, 0.1);
+}
+
+::-webkit-scrollbar-button:vertical:decrement:single-button:hover {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="4,1 0,6 8,6" fill="rgba(0,0,0,0.5)"/></svg>');
+}
+
+::-webkit-scrollbar-button:vertical:increment:single-button:hover {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="4,7 0,2 8,2" fill="rgba(0,0,0,0.5)"/></svg>');
+}
+
+::-webkit-scrollbar-button:horizontal:decrement:single-button:hover {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="1,4 6,0 6,8" fill="rgba(0,0,0,0.5)"/></svg>');
+}
+
+::-webkit-scrollbar-button:horizontal:increment:single-button:hover {
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><polygon points="7,4 2,0 2,8" fill="rgba(0,0,0,0.5)"/></svg>');
+}
+
 @font-face {
     font-family: "LXGWWenKaiMono";
     src: url("../assets/fonts/LXGWWenKaiMono-Regular.ttf") format("truetype");
