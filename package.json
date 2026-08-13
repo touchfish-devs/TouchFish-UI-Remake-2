@@ -77,7 +77,10 @@
     },
     "icon": "build/TouchFishUR.ico",
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "build/linux-icons",
       "category": "Network;Chat",
       "maintainer": "Piaoztsdy <Piaoztsdy@outlook.com>",
@@ -92,20 +95,20 @@
     }
   },
   "devDependencies": {
-    "electron": "^40.2.1",
+    "electron": "^43.4.0",
     "electron-builder": "^26.7.0",
     "svg-inline-loader": "^0.8.2"
   },
   "dependencies": {
     "@fluentui/svg-icons": "^1.1.318",
     "@pinyin-pro/data": "^1.3.1",
-    "axios": "^1.13.5",
+    "axios": "^1.19.0",
     "highlight.js": "^11.11.1",
     "katex": "^0.17.0",
     "markdown-it": "^14.2.0",
     "markdown-it-katex": "^2.0.3",
-    "semver": "^7.6.0",
     "pinyin-pro": "^3.28.1",
-    "pkijs": "^3.4.0"
+    "pkijs": "^3.4.0",
+    "semver": "^7.6.0"
   }
 }
