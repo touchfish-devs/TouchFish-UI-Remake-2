@@ -206,7 +206,7 @@ function initIndex() {
             UI.hideLoading();
 
             if (count <= 1 && !readGuide) {
-                await UI.uialert('感谢您使用 TouchFish UI Remake 2', '稍后你可以查看使用方法，了解它 TouchFish v5 的全新特性。');
+                await UI.uialert('感谢您使用 TouchFish UI Remake 2', '稍后你可以查看使用方法，了解 TouchFish v5 的全新特性。');
             }
 
             if (count > 5 || hasSkipped || readGuide) {
