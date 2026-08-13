@@ -142,7 +142,7 @@
     </style>
 </head>
 
-<body>
+<body data-page="welcome">
     <div class="welcome-container">
         <div class="header">
             <h1 id="welcome-title">开始摸鱼</h1>
@@ -170,7 +170,7 @@
                 </div>
             </div>
             <div class="footer-actions">
-                <button class="tfur-button nav-btn" onclick="nextStep(2)">
+                <button class="tfur-button nav-btn" id="welcome-next-btn">
                     下一页 ➔
                 </button>
             </div>
@@ -206,58 +206,19 @@
                     text-decoration: none;
                 }
             </style>
-            <script type="module">
-                import { UI } from './js/general_ui.js';
-                document.getElementById('TFUR1').onclick = async () => {
-                    await UI.aalert("https://github.com/pztsdy/touchfish_ui_remake");
-                };
-                document.getElementById('TFV5').onclick = async () => {
-                    await UI.aalert('https://github.com/2044-space-elevator/TouchFish');
-                }
-            </script>
             <div class="footer-actions">
                 <button class="tfur-button nav-btn" style="border-color: rgba(255,255,255,0.3) !important;"
-                    onclick="nextStep(1)">
+                    id="welcome-prev-btn">
                     上一步
                 </button>
-                <button class="tfur-button nav-btn" onclick="finishWelcome()">
+                <button class="tfur-button nav-btn" id="welcome-finish-btn">
                     立即进入 ➔
                 </button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { UI } from './js/general_ui.js';
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('icon-security').innerHTML = await UI.getIcon('shield_lock', 24, 'filled');
-            document.getElementById('icon-globe-off').innerHTML = await UI.getIcon('globe_off', 24, 'filled');
-            document.getElementById('icon-ui').innerHTML = await UI.getIcon('calendar_person', 24, 'filled');
-            document.getElementById('icon-more').innerHTML = await UI.getIcon('grid', 24, 'filled');
-        });
-
-        window.nextStep = function (stepNum) {
-            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-            document.getElementById('step-' + stepNum).classList.add('active');
-
-            const title = document.getElementById('welcome-title');
-            const subtitle = document.getElementById('welcome-subtitle');
-
-            if (stepNum === 2) {
-                title.innerText = "关于 TouchFish";
-                subtitle.innerText = "了解更多...";
-            } else {
-                title.innerText = "开始摸鱼";
-                subtitle.innerText = "了解 TouchFish v5 与 TouchFish UI Remake 2 的全新特性";
-            }
-        }
-
-        window.finishWelcome = function () {
-            localStorage.setItem('TFUR_guide_read', 'true');
-            location.href = 'index.html';
-        }
-    </script>
+    <script type="module" src="renderer.js"></script>
 </body>
 
 </html>

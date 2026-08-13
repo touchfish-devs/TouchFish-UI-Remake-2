@@ -22,7 +22,7 @@
     </style>
 </head>
 
-<body>
+<body data-page="debug">
     <h1>TouchFish UI Remake 2 (UI) 调试器</h1>
     <h2>链接</h2>
     <p>返回到 <a href="index.html">index.html</a></p>
@@ -36,22 +36,6 @@
     <hr>
     <lable><input id="loadingTi" placeholder="输入秒"></lable><br>
     <button id="loadingbtn">UI.showLoading</button>
-    <script type="module" defer>
-        import { UI } from "./js/general_ui.js"
-        const attit = document.getElementById("alerttit");
-        const atext = document.getElementById("alerttext");
-        document.getElementById("uialertbtn").onclick = async () => {
-            UI.uialert(attit.value, atext.value);
-        };
-        document.getElementById("aalertbtn").onclick = async () => {
-            UI.aalert(attit.value, atext.value);
-        };
-        document.getElementById("loadingbtn").onclick = async () => {
-            UI.showLoading(atext.value)
-            setTimeout(async () => {
-                UI.hideLoading();
-            }, document.getElementById("loadingTi").value * 1000);
-        }
-    </script>
+    <script type="module" src="renderer.js"></script>
 </body>
 </html>

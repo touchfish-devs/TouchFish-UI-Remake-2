@@ -100,7 +100,7 @@
     </style>
 </head>
 
-<body>
+<body data-page="chat">
 
     <div class="nav-rail">
         <div class="nav-item" id="nav-chat" title="聊天"></div>
@@ -169,25 +169,7 @@
         </div>
     </div>
 
-    <script type="module">
-        import { UI } from './js/general_ui.js';
-
-        window.onload = async () => {
-            UI.uialert('注意', '本页面尚未完成，目前全部功能都无法使用'); // TODO: 发版删掉
-            const chat_field = document.getElementById('nav-chat');
-            chat_field.innerHTML = await UI.getIcon('chat', 24, 'regular');
-            const contacts_field = document.getElementById('nav-contacts');
-            contacts_field.innerHTML = await UI.getIcon('people', 24, 'regular');
-            const alert_field = document.getElementById('nav-alert');
-            alert_field.innerHTML = await UI.getIcon('alert', 24, 'regular');
-            const forums_field = document.getElementById('nav-forums');
-            forums_field.innerHTML = await UI.getIcon('chat_bubbles_question', 24, 'regular');
-            const info_field = document.getElementById('nav-info');
-            info_field.innerHTML = await UI.getIcon('info', 24, 'regular');
-            const settings_field = document.getElementById('nav-settings');
-            settings_field.innerHTML = await UI.getIcon('settings', 24, 'regular');
-        };
-    </script>
+    <script type="module" src="renderer.js"></script>
 </body>
 
 </html>
