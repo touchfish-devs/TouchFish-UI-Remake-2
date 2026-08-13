@@ -1,0 +1,171 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows NSIS installer
+        run: npm run build:win
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: dist/*.exe
+
+  build-macos:
+    needs: build-windows
+    runs-on: macos-latest
+    env:
+      # No signing certificate on CI; build unsigned DMG/ZIP.
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS DMG and ZIP
+        run: npm run build:mac
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: |
+            dist/*.dmg
+            dist/*.zip
+
+  build-linux:
+    needs: build-windows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Linux AppImage and deb
+        run: npm run build:linux
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+
+  release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release-files
+          find artifacts -type f -exec cp {} release-files/ \;
+          ls -lh release-files/
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release (Tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-files/*
+          body: |
+            **Build Time / 编译时间:** ${{ steps.date.outputs.date }}
+
+            **Commit:** ${{ github.sha }}
+
+            ### Installation / 安装
+
+            Please refer to the README for installation instructions. The following may be outdated.
+
+            - `windows-build`: NSIS installer (`*.exe`), double-click to install.
+            - `macos-build`: DMG image or ZIP bundle.
+            - `linux-build`: AppImage, `chmod +x` then run.
+
+            请参考 README 获取安装说明。以下的内容可能过时。
+
+            - `windows-build`：NSIS 安装包（`*.exe`），双击安装。
+            - `macos-build`：DMG 镜像或 ZIP 包。
+            - `linux-build`：AppImage，`chmod +x` 后运行。
+
+            > [!NOTE]
+            > 此版本未签名（macOS 首次打开需在「系统设置 → 隐私与安全性」中允许），仅供测试。
+          draft: false
+          prerelease: false
+
+      - name: Create or update dev-build tag
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: create-or-update-ref
+        uses: ovsds/create-or-update-ref-action@v1
+        with:
+          ref: tags/dev-build
+          sha: ${{ github.sha }}
+
+      - name: Delete old dev-build tag locally
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: git tag -d dev-build || true
+        continue-on-error: true
+
+      - name: Upload assets to dev-build release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-files/*
+          body: |
+            > [!WARNING]
+            > This is an automated development build and may be unstable.
+            > 
+            > 这是一个自动生成的开发构建版本，可能不稳定。
+
+            **Build Time / 编译时间:** ${{ steps.date.outputs.date }}
+            **Commit:** ${{ github.sha }}
+          prerelease: true
+          tag_name: dev-build
+          name: Development Build

@@ -8,7 +8,8 @@
     "start": "electron .",
     "build": "electron-builder",
     "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac"
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
   },
   "keywords": [
     "Electron",
@@ -74,10 +75,23 @@
       "license": "LICENSE.txt",
       "deleteAppDataOnUninstall": true
     },
-    "icon": "build/TouchFishUR.ico"
+    "icon": "build/TouchFishUR.ico",
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "build/linux-icons",
+      "category": "Network;Chat",
+      "maintainer": "Piaoztsdy <Piaoztsdy@outlook.com>",
+      "desktop": {
+        "Name": "Touchfish UI Remake 2",
+        "Comment": "A beautiful, modern TouchFish v5 client",
+        "StartupWMClass": "touchfish-ui-remake-2"
+      }
+    },
+    "appImage": {
+      "artifactName": "${productName}-${version}-x86_64.AppImage"
+    }
   },
   "devDependencies": {
-    "crypto": "^1.0.1",
     "electron": "^40.2.1",
     "electron-builder": "^26.7.0",
     "svg-inline-loader": "^0.8.2"
@@ -90,7 +104,7 @@
     "katex": "^0.17.0",
     "markdown-it": "^14.2.0",
     "markdown-it-katex": "^2.0.3",
-    "node-semver": "^1.0.0",
+    "semver": "^7.6.0",
     "pinyin-pro": "^3.28.1",
     "pkijs": "^3.4.0"
   }
