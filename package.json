@@ -83,12 +83,7 @@
       ],
       "icon": "build/linux-icons",
       "category": "Network;Chat",
-      "maintainer": "Piaoztsdy <Piaoztsdy@outlook.com>",
-      "desktop": {
-        "Name": "Touchfish UI Remake 2",
-        "Comment": "A beautiful, modern TouchFish v5 client",
-        "StartupWMClass": "touchfish-ui-remake-2"
-      }
+      "maintainer": "Piaoztsdy <Piaoztsdy@outlook.com>"
     },
     "appImage": {
       "artifactName": "${productName}-${version}-x86_64.AppImage"
