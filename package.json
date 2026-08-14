@@ -72,7 +72,7 @@
       "installerIcon": "build/TouchFishUR.ico",
       "uninstallerIcon": "build/TouchFishUR.ico",
       "uninstallDisplayName": "Touchfish UI Remake 2",
-      "license": "LICENSE.txt",
+      "license": "LICENSE",
       "deleteAppDataOnUninstall": true
     },
     "icon": "build/TouchFishUR.ico",
