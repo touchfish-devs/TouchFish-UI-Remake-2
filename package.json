@@ -28,6 +28,7 @@
   "build": {
     "appId": "cn.piaoztsdy.touchfish_ui_remake-2",
     "productName": "Touchfish UI Remake 2",
+    "publish": "null",
     "directories": {
       "output": "dist"
     },
