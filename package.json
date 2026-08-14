@@ -7,9 +7,9 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac",
-    "build:linux": "electron-builder --linux"
+    "build:win": "electron-builder --win --publish never",
+    "build:mac": "electron-builder --mac --publish never",
+    "build:linux": "electron-builder --linux --publish never"
   },
   "keywords": [
     "Electron",
@@ -28,7 +28,6 @@
   "build": {
     "appId": "cn.piaoztsdy.touchfish_ui_remake-2",
     "productName": "Touchfish UI Remake 2",
-    "publish": "null",
     "directories": {
       "output": "dist"
     },
