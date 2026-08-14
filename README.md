@@ -19,12 +19,18 @@
 
 ## 截图 / Screenshots
 
-<image src="imgs/first_use_welcome.png" height=150>
-<image src="imgs/welcome_step1.png" height=150>
-<image src="imgs/welcome_step2_alpha1.png" height=150>
-<image src="imgs/reg.png" height=150>
-<image src="imgs/reg_step_2.png" height=150>
-<image src="imgs/chat_dev.png" height=150>
+<table>
+  <tr>
+    <td><img src="imgs/first_use_welcome.png" alt="首次使用欢迎" width="300"></td>
+    <td><img src="imgs/welcome_step1.png" alt="欢迎步骤1" width="300"></td>
+    <td><img src="imgs/welcome_step2_alpha1.png" alt="欢迎步骤2" width="300"></td>
+  </tr>
+  <tr>
+    <td><img src="imgs/reg.png" alt="注册页面" width="300"></td>
+    <td><img src="imgs/reg_step_2.png" alt="注册步骤2" width="300"></td>
+    <td><img src="imgs/chat_dev.png" alt="聊天界面（开发中）" width="300"></td>
+  </tr>
+</table>
 
 *暂无国际化支持 / No international support available yet.
 
