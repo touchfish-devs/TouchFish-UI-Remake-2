@@ -498,21 +498,47 @@ function initWelcome() {
 /* ============================================================
  *  chat.html
  * ============================================================ */
-async function initChat() {
-    await UI.uialert('注意', '本页面尚未完成，目前全部功能都无法使用'); // TODO: 发版删掉
+const NAV_ITEMS = [
+    { id: 'nav-chat', icon: 'chat' },
+    { id: 'nav-contacts', icon: 'people' },
+    { id: 'nav-alert', icon: 'alert' },
+    { id: 'nav-forums', icon: 'chat_bubbles_question' },
+    { id: 'nav-info', icon: 'info' },
+    { id: 'nav-settings', icon: 'settings' },
+];
 
-    const navIcons = [
-        ['nav-chat', 'chat', 'regular'],
-        ['nav-contacts', 'people', 'regular'],
-        ['nav-alert', 'alert', 'regular'],
-        ['nav-forums', 'chat_bubbles_question', 'regular'],
-        ['nav-info', 'info', 'regular'],
-        ['nav-settings', 'settings', 'regular'],
-    ];
-    for (const [id, name, style] of navIcons) {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = await UI.getIcon(name, 24, style);
-    }
+/**
+ * 切换导航栏激活状态
+ * @param {string} activeId - 当前被点击的元素ID
+ */
+async function setActiveNav(activeId) {
+    const updates = NAV_ITEMS.map(async (item) => {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+
+        const isActive = item.id === activeId;
+
+        const style = isActive ? "filled" : "regular";
+        el.innerHTML = await UI.getIcon(item.icon, 24, style);
+        el.classList.toggle('active', isActive);
+    });
+
+    await Promise.all(updates);
+}
+
+async function initChat() {
+    // TODO: 发版前删除
+    await UI.uialert('注意', '本页面尚未完成，目前全部功能都无法使用');
+
+    const initPromises = NAV_ITEMS.map(async (item) => {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+        el.innerHTML = await UI.getIcon(item.icon, 24, "regular");
+
+        bindClick(item.id, () => setActiveNav(item.id));
+    });
+
+    await Promise.all(initPromises);
 }
 
 
