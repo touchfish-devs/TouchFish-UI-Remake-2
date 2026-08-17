@@ -103,4 +103,6 @@ sudo dpkg -i <name>.deb
   - [TouchFish v2.0.0 (Server & Client, Release)](https://github.com/2044-space-elevator/TouchFishV4/releases/tag/v2.0.0)
   - [TouchFish v1.3.0 (Server & Client, Release)](https://github.com/2044-space-elevator/TouchFishV4/releases/tag/v1.3.0)
 
+---
+
 Translated by Github Copilot and Google
