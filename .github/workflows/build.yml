@@ -10,66 +10,13 @@ on:
     types: [published]
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Windows NSIS installer
-        run: npm run build:win
-
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-build
-          path: dist/*.exe
-
-  build-macos:
-    needs: build-windows
-    runs-on: macos-latest
-    env:
-      # No signing certificate on CI; build unsigned DMG/ZIP.
-      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build macOS DMG and ZIP
-        run: npm run build:mac
-
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-build
-          path: |
-            dist/*.dmg
-            dist/*.zip
-
   build-linux:
-    needs: build-windows
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: 'npm'
@@ -81,23 +28,75 @@ jobs:
         run: npm run build:linux
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: linux-build
           path: |
             dist/*.AppImage
             dist/*.deb
+  
+  build-windows:
+    needs: build-linux
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows NSIS installer
+        run: npm run build:win
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: windows-build
+          path: dist/*.exe
+
+  build-macos:
+    needs: build-linux
+    runs-on: macos-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS DMG and ZIP
+        run: npm run build:mac
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: macos-build
+          path: |
+            dist/*.dmg
+            dist/*.zip
 
   release:
-    needs: [build-windows, build-macos, build-linux]
+    needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: artifacts
 
@@ -140,24 +139,14 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Create or update dev-build tag
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        id: create-or-update-ref
-        uses: ovsds/create-or-update-ref-action@v1
-        with:
-          ref: tags/dev-build
-          sha: ${{ github.sha }}
-
-      - name: Delete old dev-build tag locally
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: git tag -d dev-build || true
-        continue-on-error: true
-
       - name: Upload assets to dev-build release
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
           files: release-files/*
+          tag_name: dev-build
+          name: Development Build
+          prerelease: true
           body: |
             > [!WARNING]
             > This is an automated development build and may be unstable.
@@ -166,6 +155,3 @@ jobs:
 
             **Build Time / 编译时间:** ${{ steps.date.outputs.date }}
             **Commit:** ${{ github.sha }}
-          prerelease: true
-          tag_name: dev-build
-          name: Development Build

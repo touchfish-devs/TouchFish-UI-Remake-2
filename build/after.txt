@@ -1,8 +1,0 @@
-请注意，永远不要 在运行本程序前添加任何以 TOUCHFISHUR2 开头的环境变量，这可能会造成你的账户/密码泄露
-
-Please note that you should NEVER add any environment variables that begin with TOUCHFISHUR2 before running this program, as this could lead to the leakage of your account/password.
-
-
-如果你不明白“环境变量”，那么请不要使用除了在开始菜单/桌面快捷方式以外的方式打开本应用。
-
-If you don't understand "environment variables", please do not open this application except through the Start Menu/desktop shortcut.

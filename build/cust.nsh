@@ -1,4 +1,1 @@
 ManifestDPIAware true
-
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\build\after.txt"
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "WARNING"
