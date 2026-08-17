@@ -157,7 +157,7 @@ ipcMain.handle('select-file', async () => {
     return result.filePaths[0];
 });
 
-ipcMain.handle('get-app-ver', async(event) => {
+ipcMain.handle('get-app-ver', async (event) => {
     return app.getVersion();
 })
 
