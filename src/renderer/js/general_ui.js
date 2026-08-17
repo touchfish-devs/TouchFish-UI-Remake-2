@@ -10,7 +10,7 @@ export const UI = {
 
     /**
      * 显示加载遮罩
-     * @param {string} msg - 提示信息
+     * @param {string} [text="加载中"] - 提示文字
      */
     showLoading(text = "加载中") {
         this.hideLoading();
@@ -47,15 +47,19 @@ export const UI = {
             if (overlay.dataset.intervalId) {
                 clearInterval(parseInt(overlay.dataset.intervalId));
             }
-            overlay.remove();
+            try {
+                overlay.remove();
+            } catch (err) {
+                console.error(`Remove loading overlay error: ${err}`);
+            }
         }
     },
 
     /**
      * 确定弹窗
-     * @param {string} title - 标题
-     * @param {string} message - 内容
-     * @returns {Promise} - 用户点击后 resolve
+     * @param {string} title - 弹窗标题
+     * @param {string} message - 弹窗内容
+     * @returns {Promise<void>} 用户点击确定后 resolve
      */
     uialert(title, message) {
         return new Promise((resolve) => {
@@ -73,17 +77,17 @@ export const UI = {
             document.body.appendChild(overlay);
 
             overlay.querySelector('.btn-ok').onclick = () => {
-                overlay.remove();
+                try { overlay.remove(); } catch (err) { console.error(`Remove uialert overlay error: ${err}`); }
                 resolve();
             };
         });
     },
 
     /**
-     * 带确定和取消按钮的弹窗
-     * @param {string} title 
-     * @param {string} message 
-     * @returns {Promise}
+     * 显示确定/取消弹窗
+     * @param {string} title - 弹窗标题
+     * @param {string} message - 弹窗内容
+     * @returns {Promise<boolean>} 确定返回 true，取消返回 false
      */
     confirm(title, message) {
         return new Promise((resolve) => {
@@ -108,7 +112,7 @@ export const UI = {
 
     /**
      * 切换页面所有交互元素的禁用状态
-     * @param {boolean} disabled - 是否禁用
+     * @param {boolean} disabled - true 为禁用, false 为启用
      */
     setBusy(disabled) {
         const inputs = document.querySelectorAll('input, button');
@@ -119,17 +123,18 @@ export const UI = {
     },
 
     /**
-     * 渲染链接
-     * @param {string} Uri - 链接 URI
+     * 显示外链提示弹窗
+     * @param {string} uri - 需要展示的外部链接
+     * @returns {Promise<void>} 用户点击确定后 resolve
      */
-    async aalert(Uri) {
+    async aalert(uri) {
         return new Promise((resolve) => {
             const overlay = document.createElement('div');
             overlay.className = 'tfur-dialog-overlay';
             overlay.innerHTML = `
                 <div class="tfur-dialog">
                     <div class="tfur-dialog-title">请在浏览器中打开链接</div>
-                    <div class="tfur-dialog-content-link" style="margin: 10px 0; padding: 10px;">${Uri}</div>
+                    <div class="tfur-dialog-content-link" style="margin: 10px 0; padding: 10px;">${uri}</div>
                     <div class="tfur-dialog-buttons">
                         <button class="tfur-button btn-copy">复制链接</button>
                         <button class="tfur-button primary tfur-dialog-btn btn-ok">确定</button>
@@ -140,7 +145,7 @@ export const UI = {
 
             overlay.querySelector('.btn-copy').onclick = () => {
                 try {
-                    navigator.clipboard.writeText(Uri);
+                    navigator.clipboard.writeText(uri);
                     this.uialert("提示", "链接已复制到剪贴板");
                 } catch (err) {
                     console.error("复制链接失败:", err);
@@ -149,22 +154,23 @@ export const UI = {
             };
 
             overlay.querySelector('.btn-ok').onclick = () => {
-                overlay.remove();
+                try { overlay.remove(); } catch (err) { console.error(`Remove aalert overlay error: ${err}`); }
                 resolve();
             };
         });
     },
 
     /**
-     * 加载 Fluent SVG
-     * @param {string} name - 图标文件名
-     * @returns {Promise<string>} - 返回 SVG 字符串
+     * 加载 Fluent UI SVG 图标
+     * @param {string} name - 图标名称（如 "add_circle"）
+     * @param {number} [size=24] - 图标尺寸
+     * @param {"regular"|"filled"} [mode="regular"] - 图标样式
+     * @returns {Promise<string>} SVG 字符串，加载失败返回空字符串
      */
     async getIcon(name, size = 24, mode = "regular") {
         try {
             const response = await fetch(`../../node_modules/@fluentui/svg-icons/icons/${name}_${size}_${mode}.svg`);
-            const svgText = await response.text();
-            return svgText;
+            return await response.text();
         } catch (e) {
             console.error("加载图标失败:", name);
             return "";

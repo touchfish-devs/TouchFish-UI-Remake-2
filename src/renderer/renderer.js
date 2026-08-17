@@ -119,9 +119,9 @@ function bindClick(id, handler) {
     else console.warn(`renderer.js: 未找到元素 #${id}`);
 }
 
-/* ============================================================
- *  index.html
- * ============================================================ */
+/**
+ * index.html
+ */
 function initIndex() {
     const date = new Date();
     const year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate();
@@ -175,7 +175,11 @@ function initIndex() {
     bindClick('guide-skip-forever', () => skipAndShowLogin());
     bindClick('guide-view-intro-btn', () => { location.href = 'welcome.html'; });
     bindClick('login-back-btn', () => {
-        document.getElementById('login-step-2').classList.remove('active');
+        try {
+            document.getElementById('login-step-2').classList.remove('active');
+        } catch (err) {
+            console.error(`Clsslist remove error: ${err}`);
+        }
         document.getElementById('login-step-1').classList.add('active');
     });
 
@@ -289,9 +293,9 @@ function initIndex() {
 }
 
 
-/* ============================================================
- *  reg.html
- * ============================================================ */
+/**
+ * reg.html
+ */
 function initReg() {
     const serverInputs = {
         ip: document.getElementById('reg-server-ip'),
@@ -332,7 +336,11 @@ function initReg() {
 
     bindClick('reg-return-login-btn', () => { location.href = 'index.html'; });
     bindClick('reg-back-btn', () => {
-        step2.classList.remove('active');
+        try {
+            step2.classList.remove('active');
+        } catch (err) {
+            console.error(`Classlist remove error: ${err}`);
+        }
         step1.classList.add('active');
     });
 
@@ -342,7 +350,11 @@ function initReg() {
     // --- 检查服务器 ---
     bindClick('btn-check-server', async () => {
         const { ip, apiPort, apiBase } = getServerConfig(serverInputs, DEFAULT_PORTS.tcpReg);
-        step1.classList.remove('active');
+        try {
+            step1.classList.remove('active');
+        } catch (err) {
+            console.error(`Classlist remove error: ${err}`);
+        }
         loader.style.display = 'flex';
         document.getElementById('reg-display-server').innerText = `${ip}:${apiPort}`;
 
@@ -411,7 +423,11 @@ function initReg() {
             if (serverConfig?.email_activate) {
                 currentUsername = user;
                 activateUid = await getUidByUsername(apiBase, user);
-                step2.classList.remove('active');
+                try {
+                    step2.classList.remove('active');
+                } catch (err) {
+                    console.error(`Classlist remove error: ${err}`);
+                }
                 step3.classList.add('active');
             } else {
                 await UI.uialert('注册成功', '账户已就绪，快去登录吧！');
@@ -450,9 +466,9 @@ function initReg() {
 }
 
 
-/* ============================================================
- *  welcome.html
- * ============================================================ */
+/**
+ * welcome.html
+ */
 function initWelcome() {
     bindClick('TFUR1', () => UI.aalert('https://github.com/pztsdy/touchfish_ui_remake'));
     bindClick('TFV5', () => UI.aalert('https://github.com/2044-space-elevator/TouchFish'));
@@ -494,10 +510,11 @@ function initWelcome() {
     loadIcons();
 }
 
+// chat.html
 
-/* ============================================================
- *  chat.html
- * ============================================================ */
+/**
+ * chat.html 导航栏图标
+ */
 const NAV_ITEMS = [
     { id: 'nav-chat', icon: 'chat' },
     { id: 'nav-contacts', icon: 'people' },
@@ -526,6 +543,9 @@ async function setActiveNav(activeId) {
     await Promise.all(updates);
 }
 
+/**
+ * chat.html
+ */
 async function initChat() {
     // TODO: 发版前删除
     await UI.uialert('注意', '本页面尚未完成，目前全部功能都无法使用');
@@ -542,9 +562,9 @@ async function initChat() {
 }
 
 
-/* ============================================================
- *  debug.html
- * ============================================================ */
+/**
+ * debug.html
+ */
 function initDebug() {
     const attit = document.getElementById('alerttit');
     const atext = document.getElementById('alerttext');
