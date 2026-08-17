@@ -5,7 +5,7 @@
   "main": "src/main/main.js",
   "type": "module",
   "scripts": {
-    "start": "electron .",
+    "start": "cross-env TOUCHFISHUR2_DEBUG=1 electron .",
     "build": "electron-builder",
     "build:win": "electron-builder --win --publish never",
     "build:mac": "electron-builder --mac --publish never",
@@ -64,7 +64,7 @@
       "icon": "build/TouchFishUR.ico"
     },
     "nsis": {
-      "include": "build/highdpi.nsh",
+      "include": "build/cust.nsh",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
@@ -90,6 +90,7 @@
     }
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "electron": "^43.4.0",
     "electron-builder": "^26.7.0",
     "svg-inline-loader": "^0.8.2"
