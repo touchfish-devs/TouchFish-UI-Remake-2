@@ -113,10 +113,10 @@
     </div>
 
     <div class="master-view">
-        <div class="background active">
+        <div id="background" class="active">
             <p style="padding: 20px; color: #666; font-size: 13px;">请选择左侧导航栏的选项以开始聊天</p>
         </div>
-        <div class="chat-sidebar unshown">
+        <div id="chat-sidebar" class="unshown">
             <!-- 消息列表/群聊 -->
             <div class="view-header">消息列表</div>
             <div id="contact-list">
@@ -127,11 +127,18 @@
                 <p style="padding: 20px; color: #666; font-size: 13px;">暂无群聊...</p>
             </div>
         </div>
-        <div class="contacts-sidebar unshown">
+        <div id="contacts-sidebar" class="unshown">
             <!-- 联系人列表 -->
             <div class="view-header">联系人</div>
             <div id="contacts-list">
                 <p style="padding: 20px; color: #666; font-size: 13px;">暂无联系人...</p>
+            </div>
+        </div>
+        <div id="alert-sidebar" class="unshown">
+            <!-- 通知列表 -->
+            <div class="view-header">通知</div>
+            <div id="alert-list">
+                <p style="padding: 20px; color: #666; font-size: 13px;">暂无通知...</p>
             </div>
         </div>
     </div>

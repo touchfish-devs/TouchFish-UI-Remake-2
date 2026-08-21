@@ -16,8 +16,22 @@ const DEFAULT_PORTS = {
 };
 
 /**
+ * 获取当前 APP 版本
+ * @returns {string} version - 版本
+ */
+async function getAppVer() {
+    try {
+        return await window.electronAPI.getAppVer();
+
+    } catch (err) {
+        console.error(`获取版本错误: ${err}`);
+    }
+    return null;
+}
+
+/**
  * 从 localStorage 恢复服务器配置到指定输入框
- * @param {Object} inputs - { ip: HTMLElement, apiPort: HTMLElement, tcpPort: HTMLElement }
+ * @param {{ ip: HTMLElement, apiPort: HTMLElement, tcpPort: HTMLElement }} inputs - 输入框 ID
  */
 function restoreServerConfig(inputs) {
     const saved = {
@@ -32,6 +46,7 @@ function restoreServerConfig(inputs) {
 
 /**
  * 保存服务器配置到 localStorage
+ * @param {{ ip: string, apiPort: string, tcpPort: string }} serverConfig - 连接参数
  */
 function saveServerConfig(ip, apiPort, tcpPort) {
     localStorage.setItem(SERVER_KEYS.ip, ip);
@@ -42,7 +57,7 @@ function saveServerConfig(ip, apiPort, tcpPort) {
 /**
  * 从输入框读取并校验服务器配置
  * @param {Object} inputs - { ip: HTMLElement, apiPort: HTMLElement, tcpPort: HTMLElement }
- * @param {string} defaultTcpPort - TCP 默认端口（登录和注册不同）
+ * @param {string} defaultTcpPort - TCP 默认端口
  * @returns {{ ip: string, apiPort: string, tcpPort: string, apiBase: string }}
  */
 function getServerConfig(inputs, defaultTcpPort = DEFAULT_PORTS.tcp) {
@@ -57,6 +72,8 @@ function getServerConfig(inputs, defaultTcpPort = DEFAULT_PORTS.tcp) {
 
 /**
  * 判断服务端响应是否成功
+ * @param {string} data - 服务端响应数据
+ * @returns {Boolean} 是否成功
  */
 function isSuccessResponse(data) {
     if (data === true) return true;
@@ -516,13 +533,39 @@ function initWelcome() {
  * chat.html 导航栏图标
  */
 const NAV_ITEMS = [
-    { id: 'nav-chat', icon: 'chat' },
-    { id: 'nav-contacts', icon: 'people' },
-    { id: 'nav-alert', icon: 'alert' },
-    { id: 'nav-forums', icon: 'chat_bubbles_question' },
-    { id: 'nav-info', icon: 'info' },
-    { id: 'nav-settings', icon: 'settings' },
+    {
+        id: 'nav-chat',
+        icon: 'chat',
+        sidebar: 'chat-sidebar'
+    },
+    {
+        id: 'nav-contacts',
+        icon: 'people',
+        sidebar: 'contacts-sidebar'
+    },
+    {
+        id: 'nav-alert',
+        icon: 'alert',
+        sidebar: 'alert-sidebar'
+    },
+    {
+        id: 'nav-forums',
+        icon: 'chat_bubbles_question',
+        sidebar: ''
+    },
+    {
+        id: 'nav-info',
+        icon: 'info',
+        sidebar: ''
+    },
+    {
+        id: 'nav-settings',
+        icon: 'settings',
+        sidebar: ''
+    },
 ];
+/** 是否移除未选择那一行字 */
+let masterBgRemoved = false;
 
 /**
  * 切换导航栏激活状态
@@ -531,6 +574,7 @@ const NAV_ITEMS = [
 async function setActiveNav(activeId) {
     const updates = NAV_ITEMS.map(async (item) => {
         const el = document.getElementById(item.id);
+        const sidebarEl = document.getElementById(item.sidebar);
         if (!el) return;
 
         const isActive = item.id === activeId;
@@ -538,6 +582,15 @@ async function setActiveNav(activeId) {
         const style = isActive ? "filled" : "regular";
         el.innerHTML = await UI.getIcon(item.icon, 24, style);
         el.classList.toggle('active', isActive);
+        sidebarEl.classList.toggle('active', isActive);
+        sidebarEl.classList.toggle('unshown', !isActive);
+        if (!masterBgRemoved) {
+            masterBgRemoved = true;
+            try {
+                document.getElementById('background').classList.remove('active');
+                document.getElementById('background').classList.add('unshown');
+            } catch (err) { console.log('严肃移除未选择背景'); }
+        }
     });
 
     await Promise.all(updates);
