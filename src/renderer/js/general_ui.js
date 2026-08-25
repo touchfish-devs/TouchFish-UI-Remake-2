@@ -1,4 +1,21 @@
 // general_ui.js
+import { t } from '../i18n.js';
+
+/**
+ * 转义 HTML 特殊字符，防止用户/服务器返回内容被当作 HTML 注入（XSS）
+ * @param {*} s - 待转义的值
+ * @returns {string}
+ */
+export function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    }[c]));
+}
+
 export const UI = {
     /**
      * 页面跳转
@@ -10,9 +27,9 @@ export const UI = {
 
     /**
      * 显示加载遮罩
-     * @param {string} [text="加载中"] - 提示文字
+     * @param {string} [text] - 提示文字，缺省时取当前语言
      */
-    showLoading(text = "加载中") {
+    showLoading(text = t('ui.loading')) {
         this.hideLoading();
 
         const loader = document.createElement('div');
@@ -26,7 +43,7 @@ export const UI = {
             <div style="width: 200px; height: 3px; background: #eee; overflow: hidden;">
                 <div class="loader-bar" style="width: 40%; height: 100%; background: #0078d7;"></div>
             </div>
-            <p style="margin-top: 15px; font-family: LXGWWenKaiMono; font-size: 12px; text-align: center; width: 100%;">${text}</p>
+            <p style="margin-top: 15px; font-family: LXGWWenKaiMono; font-size: 12px; text-align: center; width: 100%;" data-i18n>${text}</p>
         `;
         document.body.appendChild(loader);
 
@@ -70,7 +87,7 @@ export const UI = {
                     <div class="tfur-dialog-title">${title}</div>
                     <div class="tfur-dialog-content">${message}</div>
                     <div class="tfur-dialog-buttons">
-                        <button class="tfur-button primary tfur-dialog-btn btn-ok">确定</button>
+                        <button class="tfur-button primary tfur-dialog-btn btn-ok" data-i18n>${t('ui.ok')}</button>
                     </div>
                 </div>
             `;
@@ -98,8 +115,8 @@ export const UI = {
                     <div class="tfur-dialog-title">${title}</div>
                     <div class="tfur-dialog-content">${message}</div>
                     <div class="tfur-dialog-buttons">
-                        <button class="tfur-button primary tfur-dialog-btn btn-yes">确定</button>
-                        <button class="tfur-button tfur-dialog-btn btn-no">取消</button>
+                        <button class="tfur-button primary tfur-dialog-btn btn-yes" data-i18n>${t('ui.ok')}</button>
+                        <button class="tfur-button tfur-dialog-btn btn-no" data-i18n>${t('ui.cancel')}</button>
                     </div>
                 </div>
             `;
@@ -133,11 +150,11 @@ export const UI = {
             overlay.className = 'tfur-dialog-overlay';
             overlay.innerHTML = `
                 <div class="tfur-dialog">
-                    <div class="tfur-dialog-title">请在浏览器中打开链接</div>
+                    <div class="tfur-dialog-title">${t('ui.openLinkTitle')}</div>
                     <div class="tfur-dialog-content-link" style="margin: 10px 0; padding: 10px;">${uri}</div>
                     <div class="tfur-dialog-buttons">
-                        <button class="tfur-button btn-copy">复制链接</button>
-                        <button class="tfur-button primary tfur-dialog-btn btn-ok">确定</button>
+                        <button class="tfur-button btn-copy">${t('ui.copyLink')}</button>
+                        <button class="tfur-button primary tfur-dialog-btn btn-ok">${t('ui.ok')}</button>
                     </div>
                 </div>
             `;
@@ -146,10 +163,10 @@ export const UI = {
             overlay.querySelector('.btn-copy').onclick = () => {
                 try {
                     navigator.clipboard.writeText(uri);
-                    this.uialert("提示", "链接已复制到剪贴板");
+                    this.uialert(t('common.notice'), t('ui.linkCopied'));
                 } catch (err) {
                     console.error("复制链接失败:", err);
-                    this.uialert("错误", "复制链接失败");
+                    this.uialert(t('common.error'), t('ui.copyFailed'));
                 }
             };
 

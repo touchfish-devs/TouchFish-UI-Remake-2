@@ -112,7 +112,7 @@ jobs:
 
       - name: Create GitHub Release (Tag)
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: release-files/*
           body: |
@@ -141,7 +141,7 @@ jobs:
 
       - name: Upload assets to dev-build release
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: release-files/*
           tag_name: dev-build

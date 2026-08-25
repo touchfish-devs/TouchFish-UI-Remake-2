@@ -1,5 +1,6 @@
 // renderer.js
-import { UI } from './js/general_ui.js';
+import { UI, escapeHtml } from './js/general_ui.js';
+import { initI18n, t, onLocaleChange, createLangSwitcher } from './i18n.js';
 
 /** 服务器配置键名映射 */
 const SERVER_KEYS = {
@@ -65,7 +66,7 @@ function getServerConfig(inputs, defaultTcpPort = DEFAULT_PORTS.tcp) {
     const apiPort = (inputs.apiPort?.value || DEFAULT_PORTS.api).trim();
     const tcpPort = (inputs.tcpPort?.value || defaultTcpPort).trim();
 
-    if (!ip) throw new Error('请输入服务器 IP。');
+    if (!ip) throw new Error(t('server.ipRequired'));
 
     return { ip, apiPort, tcpPort, apiBase: `http://${ip}:${apiPort}` };
 }
@@ -97,13 +98,15 @@ async function safeAuthRequest(params, options = {}) {
         const response = await window.electronAPI.authRequest(params);
 
         if (!suppressError && (!response || !response.success)) {
-            throw new Error(response?.error || '通信异常');
+            throw new Error(response?.error || t('error.comm'));
         }
 
         return response;
     } catch (err) {
         if (!suppressError) {
-            await UI.uialert('错误', `无法发起通信请求或者其他错误。<br>详细信息：${err.message || err}`);
+            await UI.uialert(t('common.error'), t('error.commFailed', {
+                detail: escapeHtml(err.message || err),
+            }));
         }
         throw err;
     } finally {
@@ -157,26 +160,45 @@ function initIndex() {
     const openFullscreen = () => document.documentElement.requestFullscreen();
     const showLoginDirectly = () => { loginCard.style.display = 'block'; };
 
+    // --- 引导弹窗正文（含动态使用次数）与愚人节彩蛋日期：随语言切换重渲染 ---
+    let useCount = 0;
+    const renderGuideBody = () => {
+        const el = document.getElementById('guide-body');
+        if (el) el.innerHTML = t('index.guide.intro', { count: useCount });
+    };
+    const renderYrjDate = () => {
+        const el = document.getElementById('yrj-date');
+        if (el) el.innerHTML = t('index.yrj.date', { year });
+    };
+    onLocaleChange(renderGuideBody);
+    onLocaleChange(renderYrjDate);
+
     // --- 记住密码 ---
     const rememberBtn = document.getElementById('remember-password-btn');
     if (rememberBtn) {
-        if (localStorage.getItem('rememberedPassword')) rememberBtn.innerHTML = '忘记密码';
+        const renderRememberBtn = () => {
+            rememberBtn.textContent = localStorage.getItem('rememberedPassword')
+                ? t('login.forgotPassword')
+                : t('login.rememberPassword');
+        };
+        renderRememberBtn();
+        onLocaleChange(renderRememberBtn);
+
         rememberBtn.addEventListener('click', () => {
-            if (rememberBtn.innerHTML === '记住密码') {
-                localStorage.setItem('rememberedPassword', document.getElementById('password').value.trim());
-                UI.uialert('提示', '密码已保存，下次登录将自动填充。');
-                rememberBtn.innerHTML = '忘记密码';
-            } else {
+            if (localStorage.getItem('rememberedPassword')) {
                 localStorage.removeItem('rememberedPassword');
-                rememberBtn.innerHTML = '记住密码';
+            } else {
+                localStorage.setItem('rememberedPassword', document.getElementById('password').value.trim());
+                UI.uialert(t('common.notice'), t('login.passwordSaved'));
             }
+            renderRememberBtn();
         });
     }
 
     // --- 愚人节彩蛋 ---
     bindClick('yrj-exit', () => { idonotknow.style.display = 'none'; showLoginDirectly(); });
     bindClick('yrj-clickme', async () => {
-        await alert('你被骗了');
+        await alert(t('index.yrj.tricked'));
         openFullscreen();
         location.href = 'https://www.bilibili.com/video/BV1GJ411x7h7';
         openFullscreen();
@@ -215,7 +237,7 @@ function initIndex() {
                 document.getElementById('password').value = localStorage.getItem('rememberedPassword');
             }
         } catch (err) {
-            await UI.uialert('参数缺失', err.message);
+            await UI.uialert(t('error.missingParams'), escapeHtml(err.message));
         }
     });
 
@@ -225,7 +247,7 @@ function initIndex() {
         const pass = document.getElementById('password').value;
 
         if (!username || !pass) {
-            await UI.uialert('信息缺失', '请输入用户名和密码。');
+            await UI.uialert(t('error.missingInfo'), t('login.missingCredentials'));
             return;
         }
 
@@ -236,18 +258,18 @@ function initIndex() {
             if (isNaN(username)) {
                 const userInfo = await safeAuthRequest(
                     { type: 'getUID', apiBase, username },
-                    { showLoading: '正在与服务器通信...', suppressError: true }
+                    { showLoading: t('login.communicating'), suppressError: true }
                 );
                 if (userInfo?.data?.uid != null) {
                     uid = userInfo.data.uid;
                 } else {
-                    throw new Error('该用户名不存在');
+                    throw new Error(t('login.userNotFound'));
                 }
             }
 
             const response = await safeAuthRequest(
                 { type: 'login', apiBase, username: uid, password: pass },
-                { showLoading: '正在与服务器通信...', suppressError: true }
+                { showLoading: t('login.communicating'), suppressError: true }
             );
 
             if (response.success && isSuccessResponse(response.data)) {
@@ -260,13 +282,15 @@ function initIndex() {
                     location.href = 'chat.html';
                     return;
                 }
-                await UI.uialert('连接失败', '服务器已响应，但无法读取服务器信息。');
+                await UI.uialert(t('login.connectionFailed'), t('login.cannotReadInfo'));
             } else {
                 console.error('LOGIN:', response.data);
-                await UI.uialert('登录失败', response.error || '账号或密码不正确。');
+                await UI.uialert(t('login.loginFailed'), escapeHtml(response.error) || t('login.wrongPassword'));
             }
         } catch (err) {
-            await UI.uialert('错误', `无法发起通信请求或者其他错误。<br>详细信息：${err}`);
+            await UI.uialert(t('common.error'), t('error.commFailed', {
+                detail: escapeHtml(err.message || err),
+            }));
         }
     });
 
@@ -277,25 +301,25 @@ function initIndex() {
 
     // --- 初始化加载 ---
     const runOnLoad = async () => {
-        document.getElementById('yrj-year').textContent = year;
-
         if (month === 4 && day === 1) {
+            renderYrjDate();
             guideModal.style.display = 'none';
             loginCard.style.display = 'none';
             idonotknow.style.display = 'block';
         } else {
-            UI.showLoading('正在加载配置...');
+            UI.showLoading(t('login.loadingConfig'));
             let count = parseInt(localStorage.getItem('TFUR_use_count') || '0', 10);
             const hasSkipped = localStorage.getItem('TFUR_skip_guide') === 'true';
             const readGuide = localStorage.getItem('TFUR_guide_read') === 'true';
             localStorage.setItem('TFUR_guide_read', 'false');
             count++;
             localStorage.setItem('TFUR_use_count', String(count));
-            document.getElementById('use-count').innerText = count;
+            useCount = count;
+            renderGuideBody();
             UI.hideLoading();
 
             if (count <= 1 && !readGuide) {
-                await UI.uialert('感谢您使用 TouchFish UI Remake 2', '稍后你可以查看使用方法，了解 TouchFish v5 的全新特性。');
+                await UI.uialert(t('login.firstUseTitle'), t('login.firstUseMsg'));
             }
             if (count > 5 || hasSkipped || readGuide) {
                 showLoginDirectly();
@@ -306,6 +330,7 @@ function initIndex() {
     };
 
     restoreServerConfig(serverInputs);
+    createLangSwitcher();
     runOnLoad();
 }
 
@@ -332,6 +357,15 @@ function initReg() {
     let captchaStamp = null;
     let activateUid = null;
     let currentUsername = '';
+
+    // 邮箱占位符随服务器是否要求激活而变化，并随语言切换重渲染
+    const renderEmailPlaceholder = () => {
+        if (!emailInput) return;
+        emailInput.placeholder = serverConfig?.email_activate
+            ? t('reg.emailRequired')
+            : t('reg.emailOptional');
+    };
+    onLocaleChange(renderEmailPlaceholder);
 
     const loadCaptcha = async (apiBase) => {
         try {
@@ -377,27 +411,27 @@ function initReg() {
 
         try {
             const resp = await safeAuthRequest({ type: 'getInfo', apiBase }, { suppressError: true });
-            if (!resp?.success) throw new Error(resp?.error || '无法获取服务器信息');
+            if (!resp?.success) throw new Error(resp?.error || t('error.comm'));
 
             serverConfig = {
                 captcha: Boolean(resp.data?.captcha),
                 email_activate: Boolean(resp.data?.email_activate),
             };
-            emailInput.placeholder = serverConfig.email_activate
-                ? '邮箱地址（用于激活账号，必填）'
-                : '邮箱地址（选填）';
+            renderEmailPlaceholder();
 
             step2.classList.add('active');
             if (serverConfig.captcha) {
                 captchaArea.style.display = 'block';
                 if (!(await loadCaptcha(apiBase))) {
-                    await UI.uialert('提示', '验证码加载失败，请点击验证码图片重试。');
+                    await UI.uialert(t('common.notice'), t('reg.captchaFailed'));
                 }
             } else {
                 captchaArea.style.display = 'none';
             }
         } catch (err) {
-            await UI.uialert('错误', `无法建立与服务器的通信，具体错误：${err.message}`);
+            await UI.uialert(t('common.error'), t('error.serverCommLost', {
+                detail: escapeHtml(err.message),
+            }));
             step1.classList.add('active');
         } finally {
             loader.style.display = 'none';
@@ -411,12 +445,12 @@ function initReg() {
         const pass = document.getElementById('reg-password').value;
         const confirm = document.getElementById('reg-confirm').value;
 
-        if (user.length < 4 || !pass) { await UI.uialert('信息缺失', '请确保填写了用户名(须超过四位)和密码。'); return; }
-        if (pass !== confirm) { await UI.uialert('校验错误', '两次输入的密码不一致。'); return; }
-        if (serverConfig?.email_activate && !email) { await UI.uialert('信息缺失', '该服务器要求提供邮箱，用于激活账号。'); return; }
-        if (serverConfig?.email_activate && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { await UI.uialert('校验错误', '请输入正确的邮箱地址。'); return; }
-        if (serverConfig?.captcha && !captchaStamp) { await UI.uialert('提示', '验证码尚未加载，请点击验证码图片重试。'); return; }
-        if (serverConfig?.captcha && !captchaCodeInput.value.trim()) { await UI.uialert('信息缺失', '请输入图片中的验证码。'); return; }
+        if (user.length < 4 || !pass) { await UI.uialert(t('error.missingInfo'), t('reg.usernameMin')); return; }
+        if (pass !== confirm) { await UI.uialert(t('error.validation'), t('reg.passwordMismatch')); return; }
+        if (serverConfig?.email_activate && !email) { await UI.uialert(t('error.missingInfo'), t('reg.emailRequiredByServer')); return; }
+        if (serverConfig?.email_activate && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { await UI.uialert(t('error.validation'), t('reg.emailInvalid')); return; }
+        if (serverConfig?.captcha && !captchaStamp) { await UI.uialert(t('common.notice'), t('reg.captchaNotLoaded')); return; }
+        if (serverConfig?.captcha && !captchaCodeInput.value.trim()) { await UI.uialert(t('error.missingInfo'), t('reg.captchaEmpty')); return; }
 
         try {
             const { ip, apiPort, tcpPort, apiBase } = getServerConfig(serverInputs, DEFAULT_PORTS.tcpReg);
@@ -427,13 +461,13 @@ function initReg() {
                 email: email || undefined,
                 captcha_stamp: serverConfig?.captcha ? captchaStamp : '',
                 captcha_code: serverConfig?.captcha ? captchaCodeInput.value.trim() : '',
-            }, { showLoading: '正在创建账户...', suppressError: true });
+            }, { showLoading: t('reg.creating'), suppressError: true });
 
-            if (!result?.success) throw new Error(result?.error || '通信异常');
+            if (!result?.success) throw new Error(result?.error || t('error.comm'));
 
             if (!isSuccessResponse(result.data)) {
                 if (serverConfig?.captcha) await loadCaptcha(apiBase);
-                await UI.uialert('注册失败', result.data || '服务器拒绝了请求。');
+                await UI.uialert(t('reg.registerFailed'), escapeHtml(result.data) || t('reg.serverRejected'));
                 return;
             }
 
@@ -447,11 +481,13 @@ function initReg() {
                 }
                 step3.classList.add('active');
             } else {
-                await UI.uialert('注册成功', '账户已就绪，快去登录吧！');
+                await UI.uialert(t('reg.registerSuccess'), t('reg.readyToLogin'));
                 location.href = 'index.html';
             }
         } catch (err) {
-            await UI.uialert('注册异常', `详细信息：${err.message}`);
+            await UI.uialert(t('reg.registerError'), t('error.detail', {
+                detail: escapeHtml(err.message),
+            }));
         }
     });
 
@@ -459,27 +495,31 @@ function initReg() {
     bindClick('reg-activate-btn', async () => {
         const codeText = document.getElementById('reg-activate-code').value.trim();
         const code = parseInt(codeText, 10);
-        if (!codeText || isNaN(code)) { await UI.uialert('信息缺失', '请输入邮箱中收到的激活码。'); return; }
+        if (!codeText || isNaN(code)) { await UI.uialert(t('error.missingInfo'), t('reg.activateCodeRequired')); return; }
 
         try {
             const { apiBase } = getServerConfig(serverInputs, DEFAULT_PORTS.tcpReg);
             if (!activateUid) activateUid = await getUidByUsername(apiBase, currentUsername);
-            if (!activateUid) throw new Error('无法获取账号信息，请稍后重试。');
+            if (!activateUid) throw new Error(t('reg.cannotGetUid'));
 
             const result = await safeAuthRequest({
                 type: 'activate', apiBase, uid: activateUid, activateCode: code,
-            }, { showLoading: '正在激活账号...', suppressError: true });
+            }, { showLoading: t('reg.activating'), suppressError: true });
 
             if (result?.success && isSuccessResponse(result.data)) {
-                await UI.uialert('激活成功', '账号已激活，快去登录吧！');
+                await UI.uialert(t('reg.activateSuccess'), t('reg.activatedLogin'));
                 location.href = 'index.html';
             } else {
-                await UI.uialert('激活失败', result?.error || '激活码错误或已失效，请核对后重试。');
+                await UI.uialert(t('reg.activateFailed'), escapeHtml(result?.error) || t('reg.activateCodeInvalid'));
             }
         } catch (err) {
-            await UI.uialert('激活异常', `详细信息：${err.message}`);
+            await UI.uialert(t('reg.activateError'), t('error.detail', {
+                detail: escapeHtml(err.message),
+            }));
         }
     });
+
+    createLangSwitcher();
 }
 
 
@@ -487,8 +527,15 @@ function initReg() {
  * welcome.html
  */
 function initWelcome() {
-    bindClick('TFUR1', () => UI.aalert('https://github.com/pztsdy/touchfish_ui_remake'));
-    bindClick('TFV5', () => UI.aalert('https://github.com/2044-space-elevator/TouchFish'));
+    const infoCard = document.getElementById('info-card');
+    if (infoCard) {
+        infoCard.addEventListener('click', (e) => {
+            const link = e.target.closest('.welcome-link');
+            if (!link) return;
+            if (link.id === 'TFUR1') UI.aalert('https://github.com/pztsdy/touchfish_ui_remake');
+            else if (link.id === 'TFV5') UI.aalert('https://github.com/2044-space-elevator/TouchFish');
+        });
+    }
 
     const loadIcons = async () => {
         const icons = [
@@ -503,19 +550,25 @@ function initWelcome() {
         }
     };
 
-    const nextStep = (stepNum) => {
-        document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-        document.getElementById(`step-${stepNum}`).classList.add('active');
+    let welcomeStep = 1;
+    const renderStepText = (stepNum) => {
         const title = document.getElementById('welcome-title');
         const subtitle = document.getElementById('welcome-subtitle');
         if (stepNum === 2) {
-            title.innerText = '关于 TouchFish';
-            subtitle.innerText = '了解更多...';
+            title.innerText = t('welcome.titleAbout');
+            subtitle.innerText = t('welcome.subtitleAbout');
         } else {
-            title.innerText = '开始摸鱼';
-            subtitle.innerText = '了解 TouchFish v5 与 TouchFish UI Remake 2 的全新特性';
+            title.innerText = t('welcome.title');
+            subtitle.innerText = t('welcome.subtitle');
         }
     };
+    const nextStep = (stepNum) => {
+        document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step-${stepNum}`).classList.add('active');
+        welcomeStep = stepNum;
+        renderStepText(stepNum);
+    };
+    onLocaleChange(() => renderStepText(welcomeStep));
 
     bindClick('welcome-next-btn', () => nextStep(2));
     bindClick('welcome-prev-btn', () => nextStep(1));
@@ -525,6 +578,7 @@ function initWelcome() {
     });
 
     loadIcons();
+    createLangSwitcher();
 }
 
 // chat.html
@@ -601,7 +655,7 @@ async function setActiveNav(activeId) {
  */
 async function initChat() {
     // TODO: 发版前删除
-    await UI.uialert('注意', '本页面尚未完成，目前全部功能都无法使用');
+    await UI.uialert(t('chat.notDoneTitle'), t('chat.notDoneMsg'));
 
     const initPromises = NAV_ITEMS.map(async (item) => {
         const el = document.getElementById(item.id);
@@ -612,6 +666,7 @@ async function initChat() {
     });
 
     await Promise.all(initPromises);
+    //createLangSwitcher();
 }
 
 
@@ -645,8 +700,41 @@ const pageInits = {
 
 const page = document.body.dataset.page;
 
+await initI18n();
+
 if (pageInits[page]) {
     pageInits[page]();
 } else {
     console.warn(`renderer.js: 未识别的页面 data-page="${page}"`);
 }
+
+console.log(
+    "%c%s%c%s%c%s%c%s%c%s",
+    "color: #0078d7; font-size: 24px; font-style: italic;",
+    `欢迎使用 `,
+    "color: #0078d7; font-size: 14px; font-style: italic; font-family: \"Times New Roman\", \"Times\", serif;",
+    `Welcome to \n`,
+    "color: blue; font-weight: bold; font-size: 16px; font-family: Tahoma, \"Segoe UI\", sans-serif;",
+    `TouchFish UI Remake 2\n`,
+    "font-family: \"Fira Code\", \"Courier New\", monospace; color: #666;",
+    `
+▄▄▄▄▄▄·▄▄▄  ▄• ▄▌▪    ▄▄▄  ▄▄▄ .• ▌ ▄ ·.  ▄▄▄· ▄ •▄ ▄▄▄ .  22222
+▀•██ ▀█  ·  █▪██▌██   ▀▄ █·▀▄.▀··██ ▐███▪▐█ ▀█ █▌▄▌▪▀▄.▀·       2
+  ▐█.▪█▀▀▪  █▌▐█▌▐█·  ▐▀▀▄ ▐▀▀▪▄▐█ ▌▐▌▐█·▄█▀▀█ ▐▀▀▄·▐▀▀▪▄   2222
+  ▐█▌·██ .  ▐█▄█▌▐█▌  ▐█•█▌▐█▄▄▌██ ██▌▐█▌▐█▪ ▐▌▐█.█▌▐█▄▄▌  2
+  ▀▀▀ ▀▀▀    ▀▀▀ ▀▀▀  .▀  ▀ ▀▀▀ ▀▀  █▪▀▀▀ ▀  ▀ ·▀  ▀ ▀▀▀   222222
+
+GitHub: https://github.com/touchfish-devs/TouchFish-UI-Remake-2
+TFV5S:  https://github.com/2044-space-elevator/TouchFishServer
+TFV5C:  https://github.com/ilovescratch2/TouchFish-Client
+JOIN US:`,"font-family: \"Fira Code\", \"Courier New\", monospace; color: #78e8bf;", `      QQ: 1056812860  TFV5C: 4 (Group ID)`
+);
+console.log(
+    "%c%s%c%s%c%s%c%s%c%s%c%s",
+    "font-size: 28px; background-color: red; color: white;", `好孩子`, 
+    "font-size: 28px; background-color: yellow; color: red; font-style: italic;", `不要`, 
+    "font-size: 28px; background-color: red; color: white;", `随便在这里粘贴东西哦~\n`,
+    "font-size: 28px; background-color: yellow; color: red; font-style: italic;",`NEVER PASTE`, 
+    "font-size: 28px; background-color: red; color: white;", ` or your account will be `,
+    "font-size: 28px; background-color: yellow; color: red;", `STOLEN!`
+);

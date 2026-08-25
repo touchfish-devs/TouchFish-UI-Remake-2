@@ -145,53 +145,53 @@
 <body data-page="welcome">
     <div class="welcome-container">
         <div class="header">
-            <h1 id="welcome-title">开始摸鱼</h1>
-            <p id="welcome-subtitle" style="opacity: 0.8; font-weight: 300;">了解 TouchFish Fish UI Remake 2 和 TouchFish
-                v5 的全新特性</p>
+            <h1 id="welcome-title" data-i18n="welcome.title">开始摸鱼</h1>
+            <p id="welcome-subtitle" style="opacity: 0.8; font-weight: 300;"
+                data-i18n="welcome.subtitle">了解 TouchFish UI Remake 2 和 TouchFish v5 的全新特性</p>
         </div>
 
         <div id="step-1" class="step-content active">
             <div class="tiles-grid">
                 <div class="tile bg-blue">
                     <div class="fluent-icon-tile" id="icon-security"></div>
-                    <span>安全加密<br>保护账号安全</span>
+                    <span data-i18n-html="welcome.tile.security">安全加密<br>保护账号安全</span>
                 </div>
                 <div class="tile bg-green">
                     <div class="fluent-icon-tile" id="icon-globe-off"></div>
-                    <span>内网可用<br>无需网络连接</span>
+                    <span data-i18n-html="welcome.tile.lan">内网可用<br>无需网络连接</span>
                 </div>
                 <div class="tile bg-purple">
                     <div class="fluent-icon-tile" id="icon-ui"></div>
-                    <span>美观 UI<br>极简、流畅、现代</span>
+                    <span data-i18n-html="welcome.tile.ui">美观 UI<br>极简、流畅、现代</span>
                 </div>
                 <div class="tile bg-orange">
                     <div class="fluent-icon-tile" id="icon-more"></div>
-                    <span>更多聊天模式<br>论坛、群聊、私聊等你探索</span>
+                    <span data-i18n-html="welcome.tile.more">更多聊天模式<br>论坛、群聊、私聊等你探索</span>
                 </div>
             </div>
             <div class="footer-actions">
-                <button class="tfur-button nav-btn" id="welcome-next-btn">
+                <button class="tfur-button nav-btn" id="welcome-next-btn" data-i18n="welcome.next">
                     下一页 ➔
                 </button>
             </div>
         </div>
 
         <div id="step-2" class="step-content">
-            <div class="info-card"
+            <div class="info-card" id="info-card"
                 style="font-size: 14px; line-height: 1.6; opacity: 0.9; max-height: 0; overflow-y: auto;">
-                <h2>由来</h2>
-                <p>
+                <h2 data-i18n="welcome.origin">由来</h2>
+                <p data-i18n-html="welcome.originText">
                     TouchFish UI Remake 2 是 <span class="welcome-link" id="TFUR1">TouchFish UI Remake</span> 的适配 <span
                         class="welcome-link" id="TFV5">TouchFish v5</span> 的升级版。
                 </p>
-                <h2>版权&致谢</h2>
-                <p>&copy; Piaoztsdy 2026. 基于 AGPL-3.0 协议开源。使用、修改或分发本软件即表示您同意该协议条款。</p>
-                <p>背景图片来源: Bavo Studio / Getty Images</p>
-                <p>字体: 霞鹜文楷, 采用 OFL-1.1 许可证</p>
-                <h2>尝鲜版的注释</h2>
+                <h2 data-i18n="welcome.license">版权&致谢</h2>
+                <p data-i18n="welcome.licenseText">&copy; Piaoztsdy 2026. 基于 AGPL-3.0 协议开源。使用、修改或分发本软件即表示您同意该协议条款。</p>
+                <p data-i18n="welcome.bgCredit">背景图片来源: Bavo Studio / Getty Images</p>
+                <p data-i18n="welcome.fontCredit">字体: 霞鹜文楷, 采用 OFL-1.1 许可证</p>
+                <h2 data-i18n="welcome.evalNotes">尝鲜版的注释</h2>
                 <ul>
-                    <li>注册的邮箱验证是 AI 写的</li>
-                    <li>不止聊天的界面还没做，所以UR2在暑假结束前做完是很难的</li>
+                    <li data-i18n="welcome.note.email">注册的邮箱验证是 AI 写的</li>
+                    <li data-i18n="welcome.note.schedule">不止聊天的界面还没做，所以UR2在暑假结束前做完是很难的</li>
                 </ul>
             </div>
             <style>
@@ -208,10 +208,10 @@
             </style>
             <div class="footer-actions">
                 <button class="tfur-button nav-btn" style="border-color: rgba(255,255,255,0.3) !important;"
-                    id="welcome-prev-btn">
+                    id="welcome-prev-btn" data-i18n="welcome.prev">
                     上一页
                 </button>
-                <button class="tfur-button nav-btn" id="welcome-finish-btn">
+                <button class="tfur-button nav-btn" id="welcome-finish-btn" data-i18n="welcome.finish">
                     立即进入 ➔
                 </button>
             </div>

@@ -13,6 +13,54 @@ const require = createRequire(import.meta.url);
 /** 主浏览器窗口 */
 let mainWind = null;
 
+/**
+ * 按系统语言构建菜单模板
+ * @returns {Electron.MenuItemConstructorOptions[]}
+ */
+function buildMenuTemplate() {
+    const isZh = (app.getLocale() || '').toLowerCase().startsWith('zh');
+    const L = isZh ? {
+        program: '程序', minimize: '最小化', quit: '退出',
+        edit: '编辑', undo: '撤销', redo: '重做',
+        cut: '剪切', copy: '复制', paste: '粘贴', selectAll: '全选',
+        view: '视图', fullscreen: '全屏', devTools: '开发者工具',
+    } : {
+        program: 'Program', minimize: 'Minimize', quit: 'Quit',
+        edit: 'Edit', undo: 'Undo', redo: 'Redo',
+        cut: 'Cut', copy: 'Copy', paste: 'Paste', selectAll: 'Select All',
+        view: 'View', fullscreen: 'Toggle Full Screen', devTools: 'Developer Tools',
+    };
+
+    return [
+        {
+            label: L.program,
+            submenu: [
+                { role: 'minimize', label: L.minimize },
+                { role: 'quit', label: L.quit }
+            ]
+        },
+        {
+            label: L.edit,
+            submenu: [
+                { role: 'undo', label: L.undo },
+                { role: 'redo', label: L.redo },
+                { type: 'separator' },
+                { role: 'cut', label: L.cut },
+                { role: 'copy', label: L.copy },
+                { role: 'paste', label: L.paste },
+                { role: 'selectAll', label: L.selectAll }
+            ]
+        },
+        {
+            label: L.view,
+            submenu: [
+                { role: 'togglefullscreen', label: L.fullscreen },
+                { role: 'toggleDevTools', label: L.devTools }
+            ]
+        }
+    ];
+}
+
 function createWindow() {
     const iconPath = path.join(__dirname, "../renderer/assets/images/TouchFishUR.ico");
 
@@ -53,36 +101,7 @@ function createWindow() {
 app.whenReady().then(async () => {
     createWindow();
 
-    const template = [
-        {
-            label: '程序',
-            submenu: [
-                { role: 'minimize', label: '最小化' },
-                { role: 'quit', label: '退出' }
-            ]
-        },
-        {
-            label: '编辑',
-            submenu: [
-                { role: 'undo', label: '撤销' },
-                { role: 'redo', label: '重做' },
-                { type: 'separator' },
-                { role: 'cut', label: '剪切' },
-                { role: 'copy', label: '复制' },
-                { role: 'paste', label: '粘贴' },
-                { role: 'selectAll', label: '全选' }
-            ]
-        },
-        {
-            label: '视图',
-            submenu: [
-                { role: 'togglefullscreen', label: '全屏' },
-                { role: 'toggleDevTools', label: '开发者工具' }
-            ]
-        }
-    ];
-
-    const menu = Menu.buildFromTemplate(template);
+    const menu = Menu.buildFromTemplate(buildMenuTemplate());
     Menu.setApplicationMenu(menu);
 
     app.on('activate', () => {

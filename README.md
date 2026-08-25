@@ -7,11 +7,9 @@
 
 <img src="src/renderer/assets/images/TouchFishUR.png" alt="TouchFish UI Remake 2 Logo" width=200>
 
-<a href="https://github.com/touchfish-devs/TouchFish-UI-Remake-2/blob/main/LICENSE"><img src="https://img.shields.io/github/license/touchfish-devs/TouchFish-UI-Remake-2" alt="License" /></a>
-
-<a href="https://github.com/touchfish-devs/TouchFish-UI-Remake-2/releases"><img src="https://img.shields.io/github/release/touchfish-devs/TouchFish-UI-Remake-2" alt="latest version" /></a>
-
-<a href="https://github.com/touchfish-devs/TouchFish-UI-Remake-2/releases"><img src="https://img.shields.io/github/downloads/touchfish-devs/TouchFish-UI-Remake-2/total?color=%239F7AEA&logo=github" alt="Downloads" /></a>
+<a href="https://github.com/touchfish-devs/TouchFish-UI-Remake-2/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-%238B35DADD?style=flat-square" alt="License" /></a>
+<a href="https://github.com/touchfish-devs/TouchFish-UI-Remake-2/releases"><img src="https://img.shields.io/github/v/release/touchfish-devs/TouchFish-UI-Remake-2?include_prereleases&sort=semver&style=flat-square&color=%23EA7233DD" alt="Latest version" /></a>
+<a href="https://github.com/touchfish-devs/TouchFish-UI-Remake-2/releases"><img src="https://img.shields.io/github/downloads/touchfish-devs/TouchFish-UI-Remake-2/total?color=%239F7AEADD&logo=github&style=flat-square" alt="Downloads" /></a>
 
 </div>
 
@@ -21,7 +19,7 @@
 
 <table>
   <tr>
-    <td><img src="imgs/first_use_welcome.png" alt="首次使用欢迎" width="300"></td>
+    <td><img src="imgs/first_use_welcome_i18n.png" alt="首次使用欢迎（新增国际化）" width="300"></td>
     <td><img src="imgs/welcome_step1.png" alt="欢迎步骤1" width="300"></td>
     <td><img src="imgs/welcome_step2_alpha1.png" alt="欢迎步骤2" width="300"></td>
   </tr>
@@ -32,9 +30,7 @@
   </tr>
 </table>
 
-*暂无国际化支持 / No international support available yet.
-
-**情况/功能暂未确定，可能随时变化 / The status/function is not yet determined and may change at any time.
+*情况/功能暂未确定，可能随时变化 / The status/function is not yet determined and may change at any time.
 
 ## 安装 / Installation
 

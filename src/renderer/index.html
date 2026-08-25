@@ -115,45 +115,42 @@
 
 <body data-page="index">
     <div id="guide-modal" class="acrylic">
-        <span class="skip-text-all"><span class="skip-text"
-                id="guide-skip-once">跳过</span>&nbsp;&nbsp;<span class="skip-text"
-                id="guide-skip-forever">不再显示</span></span>
-        <h2 style="font-weight: 300;">欢迎使用 TouchFish UI Remake 2</h2>
+        <span class="skip-text-all"><span class="skip-text" id="guide-skip-once"
+                data-i18n="index.guide.skipOnce">跳过</span>&nbsp;&nbsp;<span class="skip-text"
+                id="guide-skip-forever" data-i18n="index.guide.skipForever">不再显示</span></span>
+        <h2 style="font-weight: 300;" data-i18n="index.welcome">欢迎使用 TouchFish UI Remake 2</h2>
         <div style="font-size: 14px; color: #333; margin-bottom: 30px; line-height: 1.6; max-height: 150px; overflow-y: auto;">
-            你已开启摸鱼之旅 <span id="use-count" style="font-weight: 600;">1</span> 次。<br>
-            建议初次使用之前先查看使用介绍<br>
-            以后你也可以在设置中跳转到引导界面<br>
-            本界面在使用 5 次后将不再显示。<hr>
-        <div style="text-align: left !important;">
-            请注意，<b>永远不要</b>在运行本程序前添加任何以 TOUCHFISHUR2 开头的环境变量，<b>这可能会造成你的账户/密码泄露</b><br>
-            Please note that you should NEVER add any environment variables that begin with TOUCHFISHUR2 before running this program, as <b>this could lead to the leakage of your account/password</b>.<br>
-            如果你不明白“环境变量”，那么请不要使用除了在开始菜单/桌面快捷方式以外的方式打开本应用。<br>
-            If you don't understand "environment variables", please DO NOT open this application except through the Start Menu/desktop shortcut.
-        </div></div>
-        <button class="tfur-button primary" style="width: 100%; height: 45px;" id="guide-view-intro-btn">
+            <div id="guide-body"></div>
+            <hr>
+            <div data-i18n-html="index.guide.warning" style="text-align: left !important;"></div>
+        </div>
+        <button class="tfur-button primary" style="width: 100%; height: 45px;" id="guide-view-intro-btn"
+            data-i18n="index.guide.viewIntro">
             查看使用介绍
         </button>
     </div>
 
     <div id="yrj" class="acrylic" style="display: none;">
-        <p>今天是 <span id="yrj-year">3000</span> 年 4 月 1 日</p>
+        <p id="yrj-date"></p>
         <br>
-        <button id="yrj-clickme">点击我</button>
+        <button id="yrj-clickme" data-i18n="index.yrj.clickme">点击我</button>
         <br>
         <a id="yrj-exit"></a>
     </div>
 
     <div id="login-card" class="acrylic">
         <div id="login-step-1" class="tfur-step-page active">
-            <h2>登录</h2>
-            <p class="tfur-subtitle">请输入服务器连接信息</p>
-            <input type="text" class="input-group tfur-input" id="server-ip" placeholder="服务器 IP">
-            <input type="number" class="input-group tfur-input" id="server-api-port" placeholder="API 端口"
-                inputmode="numeric">
-            <input type="number" class="input-group tfur-input" id="server-tcp-port" placeholder="TCP 端口"
-                inputmode="numeric">
+            <h2 data-i18n="login.title">登录</h2>
+            <p class="tfur-subtitle" data-i18n="server.enterInfo">请输入服务器连接信息</p>
+            <input type="text" class="input-group tfur-input" id="server-ip" data-i18n-placeholder="server.ip"
+                placeholder="服务器 IP">
+            <input type="number" class="input-group tfur-input" id="server-api-port"
+                data-i18n-placeholder="server.apiPort" placeholder="API 端口" inputmode="numeric">
+            <input type="number" class="input-group tfur-input" id="server-tcp-port"
+                data-i18n-placeholder="server.tcpPort" placeholder="TCP 端口" inputmode="numeric">
             <div style="margin-top: auto; display: flex; justify-content: flex-end;">
-                <button id="login-next-btn" class="tfur-button primary tfur-btn-next">下一步</button>
+                <button id="login-next-btn" class="tfur-button primary tfur-btn-next"
+                    data-i18n="common.next">下一步</button>
             </div>
         </div>
 
@@ -162,17 +159,20 @@
                 <span class="back-link" id="login-back-btn" style="margin-top:0; margin-right: 8px;">⬅</span>
                 <span id="login-display-server" style="font-size: 13px; color: #666;"></span>
             </div>
-            <h2>登录账号</h2>
-            <input type="text" class="input-group tfur-input" id="username" placeholder="用户名/UID">
-            <input type="password" class="input-group tfur-input" id="password" placeholder="密码">
+            <h2 data-i18n="login.accountTitle">登录账号</h2>
+            <input type="text" class="input-group tfur-input" id="username" data-i18n-placeholder="login.username"
+                placeholder="用户名/UID">
+            <input type="password" class="input-group tfur-input" id="password" data-i18n-placeholder="login.password"
+                placeholder="密码">
             <label>
                 <button id="remember-password-btn">记住密码</button>
             </label>
-            <button id="login-btn" class="tfur-button primary" style="width: 100%; margin-top: 10px;">登录</button>
+            <button id="login-btn" class="tfur-button primary"
+                style="width: 100%; margin-top: 10px;" data-i18n="login.submit">登录</button>
         </div>
 
         <div style="text-align: center;">
-            <span id="go-reg-btn" class="back-link">注册新账户</span>
+            <span id="go-reg-btn" class="back-link" data-i18n="login.register">注册新账户</span>
         </div>
     </div>
 

@@ -3,10 +3,22 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /*font-family: "Segoe UI", "Microsoft YaHei", sans-serif;*/
-    font-family: "LXGWWenKaiMono";
+    /*font-family: 'Segoe UI Light', "Helvetica Neue", Tahoma, Geneva, Verdana, sans-serif;*/
+    /*font-family: "LXGWWenKaiMono";*/
     cursor: default;
     border-radius: 0 !important;
+}
+
+body { font-family: "LXGWWenKaiMono"; }
+
+html.lang-zh-CN body, 
+html.lang-zh-CN [data-i18n] {
+    font-family: "LXGWWenKaiMono", serif !important;
+}
+
+html.lang-en body, 
+html.lang-en [data-i18n] {
+    font-family: 'Segoe UI Light', "Helvetica Neue", Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
 ::-webkit-scrollbar {
@@ -126,6 +138,7 @@ button,
     color: #000;
     transition: all 0.1s;
     outline: none;
+    font-family: 'Segoe UI Light', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 button:hover,
@@ -160,6 +173,7 @@ input[type="password"],
     padding: 8px 12px;
     outline: none;
     transition: all 0.2s;
+    font-family:'Segoe UI Light', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 input[type="text"]:focus,
