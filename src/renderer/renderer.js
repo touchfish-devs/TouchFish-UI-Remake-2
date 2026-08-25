@@ -562,11 +562,14 @@ function initWelcome() {
             subtitle.innerText = t('welcome.subtitle');
         }
     };
-    const nextStep = (stepNum) => {
+    const nextStep = async (stepNum) => {
         document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
         document.getElementById(`step-${stepNum}`).classList.add('active');
         welcomeStep = stepNum;
         renderStepText(stepNum);
+        try { document.getElementById('nowVer').innerHTML = await window.electronAPI.getAppVer(); } catch (err) {
+            console.warn(err);
+        }
     };
     onLocaleChange(() => renderStepText(welcomeStep));
 

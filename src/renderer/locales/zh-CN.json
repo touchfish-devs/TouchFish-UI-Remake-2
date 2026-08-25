@@ -71,9 +71,7 @@
     "welcome.licenseText": "© Piaoztsdy 2026. 基于 AGPL-3.0 协议开源。使用、修改或分发本软件即表示您同意该协议条款。",
     "welcome.bgCredit": "背景图片来源: Bavo Studio / Getty Images",
     "welcome.fontCredit": "字体: 霞鹜文楷, 采用 OFL-1.1 许可证",
-    "welcome.evalNotes": "尝鲜版的注释",
-    "welcome.note.email": "注册的邮箱验证是 AI 写的",
-    "welcome.note.schedule": "不止聊天的界面还没做，所以UR2在暑假结束前做完是很难的",
+    "welcome.nowVerText": "当前版本：",
 
     "reg.title": "注册新账户",
     "reg.createAccount": "创建账户",

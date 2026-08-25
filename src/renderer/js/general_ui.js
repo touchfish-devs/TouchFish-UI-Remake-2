@@ -43,7 +43,7 @@ export const UI = {
             <div style="width: 200px; height: 3px; background: #eee; overflow: hidden;">
                 <div class="loader-bar" style="width: 40%; height: 100%; background: #0078d7;"></div>
             </div>
-            <p style="margin-top: 15px; font-family: LXGWWenKaiMono; font-size: 12px; text-align: center; width: 100%;" data-i18n>${text}</p>
+            <p style="margin-top: 15px; font-size: 12px; text-align: center; width: 100%;" data-i18n>${text}</p>
         `;
         document.body.appendChild(loader);
 

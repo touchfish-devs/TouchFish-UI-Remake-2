@@ -71,9 +71,7 @@
     "welcome.licenseText": "© Piaoztsdy 2026. Open-sourced under the AGPL-3.0 license. By using, modifying or distributing this software you agree to the terms of the license.",
     "welcome.bgCredit": "Background image: Bavo Studio / Getty Images",
     "welcome.fontCredit": "Font: LXGW WenKai, licensed under OFL-1.1",
-    "welcome.evalNotes": "Notes on this early build",
-    "welcome.note.email": "The email verification for registration was written by AI",
-    "welcome.note.schedule": "Only the chat interface is done so far, so finishing UR2 before summer vacation ends is tough",
+    "welcome.nowVerText": "Now version: ",
 
     "reg.title": "Register a new account",
     "reg.createAccount": "Create account",
