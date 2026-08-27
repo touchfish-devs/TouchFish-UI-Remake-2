@@ -129,6 +129,12 @@
     "chat.send": "Send",
     "chat.notDoneTitle": "Note",
     "chat.notDoneMsg": "This page is not finished yet. All features are currently unavailable.",
+    "chat.forums": "Forums",
+    "chat.noForums": "No forums yet...",
+    "chat.info": "About",
+    "chat.info.version": "Version Information",
+    "chat.info.license": "License Agreement",
+    "chat.info.credits": "Credits",
 
     "debug.title": "TouchFish UI Remake 2 (UI) Debugger",
     "debug.links": "Links",

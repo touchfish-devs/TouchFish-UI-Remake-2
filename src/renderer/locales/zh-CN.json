@@ -129,6 +129,12 @@
     "chat.send": "发送",
     "chat.notDoneTitle": "注意",
     "chat.notDoneMsg": "本页面尚未完成，目前全部功能都无法使用",
+    "chat.forums": "论坛",
+    "chat.noForums": "暂无论坛...",
+    "chat.info": "关于",
+    "chat.info.version": "版本信息",
+    "chat.info.license": "许可协议",
+    "chat.info.credits": "鸣谢",
 
     "debug.title": "TouchFish UI Remake 2 (UI) 调试器",
     "debug.links": "链接",

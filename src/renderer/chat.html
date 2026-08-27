@@ -85,6 +85,30 @@
             flex-direction: column;
         }
 
+        .sidebar-card {
+            margin: 8px 10px;
+            padding: 12px 14px;
+            min-height: 48px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-left: 3px solid transparent;
+            border-radius: 6px;
+            color: rgba(0, 0, 0, 0.75);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .sidebar-card:hover {
+            background: rgba(255, 255, 255, 0.42);
+        }
+
+        .sidebar-card.active {
+            background: rgba(0, 80, 150, 0.22);
+            border-left: 7px solid var(--tfur-blue);
+            color: rgba(0, 35, 75, 0.95);
+        }
+
         .chat-content {
             flex: 1;
             padding: 20px;
@@ -108,22 +132,20 @@
         <div class="nav-item" id="nav-alert" title="通知" data-i18n-attr="title:chat.nav.alert"></div>
         <div class="nav-item" id="nav-forums" title="论坛" data-i18n-attr="title:chat.nav.forums"></div>
         <!---->
-        <div class="nav-item" style="margin-top: auto;" id="nav-info" title="关于"
-            data-i18n-attr="title:chat.nav.info"></div>
+        <div class="nav-item" style="margin-top: auto;" id="nav-info" title="关于" data-i18n-attr="title:chat.nav.info">
+        </div>
         <div class="nav-item" id="nav-settings" title="设置" data-i18n-attr="title:chat.nav.settings"></div>
     </div>
 
     <div class="master-view">
         <div id="background" class="active">
-            <p style="padding: 20px; color: #666; font-size: 13px;"
-                data-i18n="chat.selectPrompt">请选择左侧导航栏的选项以开始聊天</p>
+            <p style="padding: 20px; color: #666; font-size: 13px;" data-i18n="chat.selectPrompt">请选择左侧导航栏的选项以开始聊天</p>
         </div>
         <div id="chat-sidebar" class="unshown">
             <!-- 消息列表/群聊 -->
             <div class="view-header" data-i18n="chat.messageList">消息列表</div>
             <div id="contact-list">
-                <p style="padding: 20px; color: #666; font-size: 13px;"
-                    data-i18n="chat.noConversation">暂无会话...</p>
+                <p style="padding: 20px; color: #666; font-size: 13px;" data-i18n="chat.noConversation">暂无会话...</p>
             </div>
             <hr>
             <div id="group-list">
@@ -134,16 +156,31 @@
             <!-- 联系人列表 -->
             <div class="view-header" data-i18n="chat.contacts">联系人</div>
             <div id="contacts-list">
-                <p style="padding: 20px; color: #666; font-size: 13px;"
-                    data-i18n="chat.noContacts">暂无联系人...</p>
+                <p style="padding: 20px; color: #666; font-size: 13px;" data-i18n="chat.noContacts">暂无联系人...</p>
             </div>
         </div>
         <div id="alert-sidebar" class="unshown">
             <!-- 通知列表 -->
             <div class="view-header" data-i18n="chat.notifications">通知</div>
             <div id="alert-list">
-                <p style="padding: 20px; color: #666; font-size: 13px;"
-                    data-i18n="chat.noNotifications">暂无通知...</p>
+                <p style="padding: 20px; color: #666; font-size: 13px;" data-i18n="chat.noNotifications">暂无通知...</p>
+            </div>
+        </div>
+        <div id="forums-sidebar" class="unshown">
+            <!-- 论坛列表 -->
+            <div class="view-header" data-i18n="chat.forums">论坛</div>
+            <div id="forums-list">
+                <p style="padding: 20px; color: #666; font-size: 13px;" data-i18n="chat.noForums">暂无论坛...</p>
+            </div>
+        </div>
+        <!--------------->
+        <div id="info-sidebar" class="unshown">
+            <!-- 关于 -->
+            <div class="view-header" data-i18n="chat.info">关于</div>
+            <div id="info-card-list">
+                <div class="sidebar-card" data-i18n="chat.info.version">版本信息</div>
+                <div class="sidebar-card" data-i18n="chat.info.license">许可协议</div>
+                <div class="sidebar-card" data-i18n="chat.info.credits">鸣谢</div>
             </div>
         </div>
     </div>

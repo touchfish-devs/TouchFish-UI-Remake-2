@@ -608,17 +608,12 @@ const NAV_ITEMS = [
     {
         id: 'nav-forums',
         icon: 'chat_bubbles_question',
-        sidebar: ''
+        sidebar: 'forums-sidebar'
     },
     {
         id: 'nav-info',
         icon: 'info',
-        sidebar: ''
-    },
-    {
-        id: 'nav-settings',
-        icon: 'settings',
-        sidebar: ''
+        sidebar: 'info-sidebar'
     },
 ];
 /** 是否移除未选择那一行字 */
@@ -659,6 +654,7 @@ async function setActiveNav(activeId) {
 async function initChat() {
     // TODO: 发版前删除
     await UI.uialert(t('chat.notDoneTitle'), t('chat.notDoneMsg'));
+    document.getElementById("nav-settings").innerHTML = await UI.getIcon("settings", 24);
 
     const initPromises = NAV_ITEMS.map(async (item) => {
         const el = document.getElementById(item.id);
