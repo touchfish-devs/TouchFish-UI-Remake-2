@@ -620,6 +620,13 @@ const NAV_ITEMS = [
 let masterBgRemoved = false;
 
 /**
+ * 关于侧栏列表
+ */
+const SIDEBAR_ABOUT = [
+    'info-side-ver', 'info-side-license', 'info-side-credits',
+];
+
+/**
  * 切换导航栏激活状态
  * @param {string} activeId - 当前被点击的元素ID
  */
@@ -649,6 +656,21 @@ async function setActiveNav(activeId) {
 }
 
 /**
+ * 切换通用无图标栏激活状态
+ * @param {string} activeId - 当前被点击的元素ID
+ * @param {string []} allIds - 所有元素ID
+ */
+function setActiveSidebar(activeId, allIds) {
+    const allSidebars = allIds;
+    allSidebars.forEach((sidebar) => {
+        const el = document.getElementById(sidebar);
+        if (!el) return;
+        const isActive = el.id === activeId;
+        el.classList.toggle('active', isActive);
+    });
+}
+
+/**
  * chat.html
  */
 async function initChat() {
@@ -664,7 +686,16 @@ async function initChat() {
         bindClick(item.id, () => setActiveNav(item.id));
     });
 
+    // About Sidebar
+    const aboutPromises = SIDEBAR_ABOUT.map(async (id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        bindClick(id, () => setActiveSidebar(id, SIDEBAR_ABOUT));
+    });
+
     await Promise.all(initPromises);
+    await Promise.all(aboutPromises);
     //createLangSwitcher();
 }
 
@@ -721,19 +752,19 @@ console.log(
 ▀•██ ▀█  ·  █▪██▌██   ▀▄ █·▀▄.▀··██ ▐███▪▐█ ▀█ █▌▄▌▪▀▄.▀·       2
   ▐█.▪█▀▀▪  █▌▐█▌▐█·  ▐▀▀▄ ▐▀▀▪▄▐█ ▌▐▌▐█·▄█▀▀█ ▐▀▀▄·▐▀▀▪▄   2222
   ▐█▌·██ .  ▐█▄█▌▐█▌  ▐█•█▌▐█▄▄▌██ ██▌▐█▌▐█▪ ▐▌▐█.█▌▐█▄▄▌  2
-  ▀▀▀ ▀▀▀    ▀▀▀ ▀▀▀  .▀  ▀ ▀▀▀ ▀▀  █▪▀▀▀ ▀  ▀ ·▀  ▀ ▀▀▀   222222
+  ▀▀▀ ▀▀▀    ▀▀▀ ▀▀▀  .▀  ▀ ▀▀▀ ▀▀  █▪▀▀▀ ▀  ▀ ·▀  ▀ ▀▀▀   222222  Now Version: ${await getAppVer() || 'unknown'}
 
 GitHub: https://github.com/touchfish-devs/TouchFish-UI-Remake-2
 TFV5S:  https://github.com/2044-space-elevator/TouchFishServer
 TFV5C:  https://github.com/ilovescratch2/TouchFish-Client
-JOIN US:`,"font-family: \"Fira Code\", \"Courier New\", monospace; color: #78e8bf;", `      QQ: 1056812860  TFV5C: 4 (Group ID)`
+JOIN US:`, "font-family: \"Fira Code\", \"Courier New\", monospace; color: #78e8bf;", `      QQ: 1056812860  TFV5C: 4 (Group ID)`
 );
 console.log(
     "%c%s%c%s%c%s%c%s%c%s%c%s",
-    "font-size: 28px; background-color: red; color: white;", `好孩子`, 
-    "font-size: 28px; background-color: yellow; color: red; font-style: italic;", `不要`, 
+    "font-size: 28px; background-color: red; color: white;", `好孩子`,
+    "font-size: 28px; background-color: yellow; color: red; font-style: italic;", `不要`,
     "font-size: 28px; background-color: red; color: white;", `随便在这里粘贴东西哦~\n`,
-    "font-size: 28px; background-color: yellow; color: red; font-style: italic;",`NEVER PASTE`, 
+    "font-size: 28px; background-color: yellow; color: red; font-style: italic;", `NEVER PASTE`,
     "font-size: 28px; background-color: red; color: white;", ` or your account will be `,
     "font-size: 28px; background-color: yellow; color: red;", `STOLEN!`
 );
