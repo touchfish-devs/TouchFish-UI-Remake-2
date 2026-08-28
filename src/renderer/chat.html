@@ -121,6 +121,18 @@
             border-top: 1px solid var(--tfur-border);
             padding: 10px;
         }
+
+        .unselected-main.active {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .unselected-main img {
+            width: 180px;
+            opacity: 0.2;
+        }
     </style>
 </head>
 
@@ -187,6 +199,7 @@
 
     <div class="detail-view">
         <div class="unselected-main active">
+            <img src="assets/images/TouchFish.png" alt="TouchFish Logo">
         </div>
         <div class="chat-main unshown">
             <div class="view-header" style="background: rgba(255,255,255,0.3)">
